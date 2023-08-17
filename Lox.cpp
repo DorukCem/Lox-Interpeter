@@ -17,10 +17,11 @@ void Lox::run_script(int argc, char const *argv[])
       std::exit(64);
    } 
    else if (argc == 2) {
-        run_file(argv[1]);
+      std::cout << "Running from file at: " << argv[1] << std::endl;
+      run_file(argv[1]);
    }
    else {
-        run_prompt();
+      run_prompt();
    }
 }
 
@@ -61,7 +62,6 @@ void Lox::run(std::string source)
    for (Token token : tokens) {
       std::cout << token.to_string() << " ";
    }
-   // ! We are getting these useless(??) nil tokens
    std::cout << tokens.size() << std::endl;
    std::cout << std::endl;
    had_error = false;
@@ -77,4 +77,3 @@ void Lox::report(int line, std::string where,  std::string message)
    std::cout << "[line " << line << "] Error" << where << ": " << message << std::endl;
    had_error = true;
 }
-

@@ -138,16 +138,14 @@ void Scanner::string()
       }
       advance();
    }
-
    if (is_at_end()) {
       Lox::error(line, "Unterminated string.");
       return;
    }
-
    // The closing ".
    advance();
    // Trim the surrounding quotes.
-   std::string value = source.substr(start + 1, current - 2);
+   std::string value = source.substr(start + 1, current - start - 2);
    add_token(STRING, value);
 }
 
@@ -161,7 +159,6 @@ void Scanner::number()
    {
       // Consume the "."
       advance();
-
       while (isdigit( peek() )) {
          advance();
       }
