@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <any>
 
 enum TokenType
 {
@@ -25,13 +26,13 @@ enum TokenType
 
 class Token
 {
-   const TokenType type;      
-   const std::string lexeme;  // The group of characters
-   const std::string literal; // The actual value that the token is holding, if any 
+   const TokenType type;       
+   std::string lexeme; // The group of characters
+   std::any literal; // The actual value that the token is holding, if any 
    const int line;            // For better errror reporting
 
    public:
-   Token(TokenType a_type, const std::string& a_lexeme, const std::string& a_literal, unsigned int a_line);
+   Token(TokenType a_type, std::string a_lexeme, std::any a_literal, unsigned int a_line);
    std::string to_string() const;
 };
 

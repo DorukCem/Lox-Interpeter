@@ -28,10 +28,10 @@ Scanner::Scanner(const std::string& a_source)
 
 void Scanner::add_token(TokenType type)
 {
-   add_token(type, "");   
+   add_token(type, nullptr);   
 }
 
-void Scanner::add_token(TokenType type, std::string literal)
+void Scanner::add_token(TokenType type, std::any literal)
 {
    std::string text = source.substr(start, current - start);
    tokens.push_back(Token(type, text, literal, line));
@@ -167,8 +167,9 @@ void Scanner::number()
       }
    }
 
-// ! double is a string
-   add_token(NUMBER, source.substr(start, current-start) );
+   add_token(NUMBER, 
+       std::stod(source.substr(start, current-start)) 
+   );
 }
 
 void Scanner::identifier()

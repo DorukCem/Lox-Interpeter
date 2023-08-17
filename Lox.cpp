@@ -12,9 +12,9 @@ bool Lox::had_error = false;
 
 void Lox::run_script(int argc, char const *argv[])
 {
-   // ? what are we doiing here 
    if (argc > 2) {
       std::cout << "Usage: jlox [script]" << std::endl;
+      std::exit(64);
    } 
    else if (argc == 2) {
         run_file(argv[1]);
@@ -61,6 +61,8 @@ void Lox::run(std::string source)
    for (Token token : tokens) {
       std::cout << token.to_string() << " ";
    }
+   // ! We are getting these useless(??) nil tokens
+   std::cout << tokens.size() << std::endl;
    std::cout << std::endl;
    had_error = false;
 }

@@ -21,7 +21,7 @@ private:
    char advance() { return source[current++]; }
    bool is_at_end() { return current >= source.length(); }
    void add_token(TokenType type);
-   void add_token(TokenType type, std::string literal);
+   void add_token(TokenType type, std::any literal);
    bool match(char expected);
    char peek();
    char peek_next();
