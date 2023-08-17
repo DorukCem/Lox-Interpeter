@@ -26,6 +26,37 @@ Scanner::Scanner(const std::string& a_source)
 :  source(a_source)
 {  }
 
+void Scanner::add_token(TokenType type)
+{
+   add_token(type, "");   
+}
+
+void Scanner::add_token(TokenType type, std::string literal)
+{
+   std::string text = source.substr(start, current - start);
+   tokens.push_back(Token(type, text, literal, line));
+}
+
+char Scanner::peek()
+{
+   if (is_at_end()) { return '\0'; }
+   return source[current];
+}
+
+char Scanner::peek_next()
+{
+   if (current + 1 >= source.length()) { return '\0'; }
+   return source[current + 1];
+}
+
+bool Scanner::match(char expected)
+{
+   if (is_at_end()) { return false; }
+   if (source[current] != expected) { return false; }
+   current++;
+   return true;
+}
+
 std::vector<Token> Scanner::scan_tokens()
 {
    while (not is_at_end())
@@ -98,37 +129,6 @@ void Scanner::scan_token()
          }
     }
 }
-void Scanner::add_token(TokenType type)
-{
-   add_token(type, "");   
-}
-
-void Scanner::add_token(TokenType type, std::string literal)
-{
-   std::string text = source.substr(start, current - start);
-   tokens.push_back(Token(type, text, literal, line));
-}
-
-bool Scanner::match(char expected)
-{
-   if (is_at_end()) { return false; }
-   if (source[current] != expected) { return false; }
-   current++;
-   return true;
-}
-
-char Scanner::peek()
-{
-   if (is_at_end()) { return '\0'; }
-   return source[current];
-}
-
-
-char Scanner::peek_next()
-{
-   if (current + 1 >= source.length()) { return '\0'; }
-   return source[current + 1];
-}
 
 void Scanner::string()
 {
@@ -176,7 +176,6 @@ void Scanner::identifier()
    while (isalnum(peek())) {
       advance();
    }
-
    std::string text = source.substr(start, current-start);   
    auto is_in_map = keywords.find(text);
    TokenType type = (is_in_map == keywords.end()) ? IDENTIFIER : keywords[text];

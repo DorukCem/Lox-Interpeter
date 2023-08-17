@@ -12,6 +12,7 @@ bool Lox::had_error = false;
 
 void Lox::run_script(int argc, char const *argv[])
 {
+   // ? what are we doiing here 
    if (argc > 2) {
       std::cout << "Usage: jlox [script]" << std::endl;
    } 

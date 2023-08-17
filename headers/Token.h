@@ -25,10 +25,10 @@ enum TokenType
 
 class Token
 {
-   const TokenType type;
-   const std::string lexeme;
-   const std::string literal;
-   const int line;   
+   const TokenType type;      
+   const std::string lexeme;  // The group of characters
+   const std::string literal; // The actual value that the token is holding, if any 
+   const int line;            // For better errror reporting
 
    public:
    Token(TokenType a_type, const std::string& a_lexeme, const std::string& a_literal, unsigned int a_line);
@@ -36,6 +36,4 @@ class Token
 };
 
 
-
-
-
+// * Each group of charachters is called a lexeme 

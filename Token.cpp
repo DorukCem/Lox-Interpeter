@@ -8,16 +8,16 @@ Token::Token(TokenType a_type, const std::string& a_lexeme, const std::string& a
    line(a_line)
 { }
 
+// ** This Method is only good for debugging
 std::string Token::to_string() const
 {
    // for string and number literals, use actual value
    if (type == TokenType::STRING || type == TokenType::NUMBER) {
-      return literal;
+      return "literal: " + literal;
    }
    if (type == TokenType::IDENTIFIER)
    {
-      return lexeme;
+      return "var: " + lexeme;
    }
-   // so we can distinquish indetifiers
-   return '_' + lexeme;
+   return "keyword: "+ lexeme;
 }
