@@ -1,8 +1,5 @@
 /-p
 /.vscode
-/Lox.o
-/main.exe
-/main.o
-/Scanner.o
-/test.lox
-/Token.o
+*.o
+*.exe
+*.lox
