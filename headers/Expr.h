@@ -22,7 +22,15 @@ struct Expr {
 
 /*
    Inherting std::enable_shared_from_this allows the object to return a shared pointer pointing to itself
+
+   These are all tree nodes with slightly different attributes
+   For example:
+    - Binary node holds an expression to its left and right
+               (or)
+               /  \
+            true  false 
 */ 
+
 struct Binary : Expr, std::enable_shared_from_this<Binary>
 {
    const std::shared_ptr<Expr> left;
