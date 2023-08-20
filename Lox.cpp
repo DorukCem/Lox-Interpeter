@@ -1,5 +1,7 @@
 #include "headers/Lox.h"
 #include "headers/Scanner.h"
+#include "headers/Parser.h"
+
 
 #include <string>
 #include <fstream>
@@ -50,6 +52,7 @@ void Lox::run_prompt()
          break;
       }
       run(input);
+      had_error = false;
    }
 }
 
@@ -57,14 +60,17 @@ void Lox::run(std::string source)
 {
    Scanner scanner(source);
    std::vector<Token> tokens = scanner.scan_tokens();
+   for (Token tok : tokens) 
+   {
+      std::cout << tok.to_string() << " ";
+   } std::cout << std::endl;
 
-    // For now, just print the tokens.
-   for (Token token : tokens) {
-      std::cout << token.to_string() << " ";
-   }
-   std::cout << tokens.size() << std::endl;
-   std::cout << std::endl;
-   had_error = false;
+   Parser parser{tokens};
+   std::shared_ptr<Expr> expression = parser.parse();
+
+   // Stop if there was a syntax error.
+   if (had_error) { return; }
+   
 }
 
 void Lox::error(int line, std::string message)

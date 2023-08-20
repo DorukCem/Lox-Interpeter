@@ -26,7 +26,7 @@ std::string token_to_string(TokenType type) {
   return strings[static_cast<int>(type)];
 }
 
-// ** This Method is only good for debugging
+// ** This Method is for debugging
 std::string Token::to_string() const
 {
   std::string literal_text;
@@ -42,13 +42,11 @@ std::string Token::to_string() const
         literal_text = std::to_string(std::any_cast<double>(literal));
         break;
       case (LOX_TRUE):
-        literal_text = "true";
-        break;
       case (LOX_FALSE):
-        literal_text = "false";
+        literal_text = std::to_string(std::any_cast<bool>(literal));
         break;
       default:
-        literal_text = "nil";
+        literal_text = "not_literal";
     }
 
    return token_to_string(type) + " " + lexeme + " " + literal_text;

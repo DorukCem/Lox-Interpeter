@@ -1,6 +1,9 @@
 #include "headers/Parser.h"
 #include "headers/Lox.h"
 
+// ?! For some reason test.lox has to start with an expression 
+// !  Find an AST printer to test code
+
 Parser::Parser(std::vector<Token>& tokens)
    :tokens(tokens)
 { 
@@ -128,7 +131,7 @@ bool Parser::match(T... types)
 
 bool Parser::check(TokenType type)
 {
-   if (not is_at_end()) { return false; }
+   if (is_at_end()) { return false; }
    return peek().type == type;
 }
 

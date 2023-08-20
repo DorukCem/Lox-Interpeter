@@ -177,6 +177,13 @@ void Scanner::identifier()
    std::string text = source.substr(start, current-start);   
    auto is_in_map = keywords.find(text);
    TokenType type = (is_in_map == keywords.end()) ? IDENTIFIER : keywords[text];
-   
-   add_token(type);
+   if (type == LOX_TRUE or type == LOX_FALSE)
+   {
+      bool literal = (type == LOX_TRUE);
+      add_token(type, literal);
+   }
+   else
+   {
+      add_token(type);
+   }
 }
