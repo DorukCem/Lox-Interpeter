@@ -1,11 +1,13 @@
 #pragma once
 #include <string>
+#include "Token.h"
 
 class Lox
 {
 public:
   static void run_script(int argc, char const *argv[]);
   static void error(int line, std::string message);
+  static void error(Token token, std::string message);
 private:
   static bool had_error;
 private:
