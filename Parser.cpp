@@ -1,7 +1,8 @@
 #include "headers/Parser.h"
 #include "headers/Lox.h"
+#include <cassert>
 
-// ?! For some reason test.lox has to start with an expression 
+// ?! For some reason test.lox has to start with a literal
 // !  Find an AST printer to test code
 
 Parser::Parser(std::vector<Token>& tokens)
@@ -119,6 +120,7 @@ std::shared_ptr<Expr> Parser::primary()
 template<typename... T>
 bool Parser::match(T... types)
 {  
+   assert((... && std::is_same_v<T, TokenType>));
    // iterate over the argumentsand apply the check function to each of them
    // then combine the results of the check function by OR'ing them 
    if ((... || check(types))) {
@@ -148,18 +150,18 @@ bool Parser::is_at_end()
 
 Token Parser::peek()
 {
-   return tokens[current];
+   return tokens.at(current);
 }
 
 Token Parser::previous()
 {
-   return tokens[current - 1];
+   return tokens.at(current - 1);
 }
 
 
 Token Parser::consume(TokenType type, std::string message)
 {
-   if (check(type)) return advance();
+   if (check(type)) { return advance(); }
 
    throw error(peek(), message);
 }
