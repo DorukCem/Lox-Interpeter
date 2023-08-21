@@ -1,7 +1,7 @@
 #include "headers/Lox.h"
 #include "headers/Scanner.h"
 #include "headers/Parser.h"
-
+#include "headers/AST_printer.h"
 
 #include <string>
 #include <fstream>
@@ -60,17 +60,19 @@ void Lox::run(std::string source)
 {
    Scanner scanner(source);
    std::vector<Token> tokens = scanner.scan_tokens();
-   for (Token tok : tokens) 
-   {
-      std::cout << tok.to_string() << " ";
-   } std::cout << std::endl;
+   // for (Token tok : tokens) 
+   // {
+   //    std::cout << tok.to_string() << " ";
+   // } std::cout << std::endl;
 
    Parser parser{tokens};
    std::shared_ptr<Expr> expression = parser.parse();
 
    // Stop if there was a syntax error.
    if (had_error) { return; }
-   
+
+   std::cout << AstPrinter{}.print(expression) << "\n";
+
 }
 
 void Lox::error(int line, std::string message)

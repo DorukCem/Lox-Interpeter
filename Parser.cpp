@@ -2,8 +2,7 @@
 #include "headers/Lox.h"
 #include <cassert>
 
-// ?! For some reason test.lox has to start with a literal
-// !  Find an AST printer to test code
+// ? For some reason test.lox has to start with a literal
 
 Parser::Parser(std::vector<Token>& tokens)
    :tokens(tokens)
