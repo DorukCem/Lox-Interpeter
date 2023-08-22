@@ -1,9 +1,8 @@
 #pragma once
 #include <string>
 #include "Token.h"
-#include "headers/Error.h"
-
-class Interpreter; // forward declartion
+#include "RuntimeError.h"
+#include "Interpreter.h"
 
 class Lox
 {
@@ -15,7 +14,7 @@ public:
 private:
   static bool had_error;
   static bool had_runtime_error;
-  static const Interpreter interpreter;
+  static Interpreter interpreter;
 private:
   static void run_file(std::string path); 
   static void run_prompt();

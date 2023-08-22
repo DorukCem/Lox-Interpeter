@@ -10,8 +10,10 @@
 #include <vector>
 
 
+
 bool Lox::had_error = false;
 bool Lox::had_runtime_error = false;
+Interpreter Lox::interpreter{};
 
 void Lox::run_script(int argc, char const *argv[])
 {
@@ -75,8 +77,8 @@ void Lox::run(std::string source)
    // Stop if there was a syntax error.
    if (had_error) { return; }
 
-   std::cout << AstPrinter{}.print(expression) << "\n";
-
+   //std::cout << AstPrinter{}.print(expression) << "\n";
+   interpreter.interpret(expression);
 }
 
 void Lox::error(int line, std::string message)
