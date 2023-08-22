@@ -9,10 +9,10 @@ struct Literal;
 struct Unary;
 
 struct ExprVisitor {
-  virtual std::any visit_BinaryExpr(std::shared_ptr<Binary> expr) = 0;
-  virtual std::any visit_GroupExpr(std::shared_ptr<Group> expr) = 0;
+  virtual std::any visit_BinaryExpr (std::shared_ptr<Binary> expr) = 0;
+  virtual std::any visit_GroupExpr  (std::shared_ptr<Group> expr) = 0;
   virtual std::any visit_LiteralExpr(std::shared_ptr<Literal> expr) = 0;
-  virtual std::any visit_UnaryExpr(std::shared_ptr<Unary> expr) = 0;
+  virtual std::any visit_UnaryExpr  (std::shared_ptr<Unary> expr) = 0;
   virtual ~ExprVisitor() = default;
 };
 
