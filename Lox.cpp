@@ -11,6 +11,7 @@
 
 
 bool Lox::had_error = false;
+bool Lox::had_runtime_error = false;
 
 void Lox::run_script(int argc, char const *argv[])
 {
@@ -37,6 +38,9 @@ void Lox::run_file(std::string path)
 
    if (had_error){
       exit(65);
+   }
+   if (had_runtime_error) {
+      exit(70);
    }
 }
 
@@ -96,4 +100,10 @@ void Lox::error(Token token, std::string message)
    {
       report(token.line, " at '" + token.lexeme + "'", message);
    }
+}
+
+void Lox::runtime_error(RuntimeError error)
+{
+   std::cout << error.what() << std::endl << "[line " << error.token.line << "]";
+   had_runtime_error = true; 
 }

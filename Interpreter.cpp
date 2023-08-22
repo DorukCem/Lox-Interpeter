@@ -1,15 +1,26 @@
-#include "headers/Interpeter.h"
-#include "headers/Error.h"
+#include "headers/Interpreter.h"
+
+#include "headers/Lox.h"
+#include <iostream>
 
 
+void Interpreter::interpret(std::shared_ptr<Expr> expr)
+{
+   try 
+   {
+      std::any value = evaluate(expr);
+      std::cout << stringfy(value) << std::endl;
+   } catch (RuntimeError error) {
+      Lox::runtime_error(error);
+   }
+}
 
-
-std::any Interpeter::evaluate(std::shared_ptr<Expr> expr)
+std::any Interpreter::evaluate(std::shared_ptr<Expr> expr)
 {
    return expr->accept(*this);
 }
 
-std::any Interpeter::visit_BinaryExpr(std::shared_ptr<Binary> expr)
+std::any Interpreter::visit_BinaryExpr(std::shared_ptr<Binary> expr)
 {
    std::any right = evaluate(expr->right);
    std::any left  = evaluate(expr->left);
@@ -59,17 +70,17 @@ std::any Interpeter::visit_BinaryExpr(std::shared_ptr<Binary> expr)
    }
 }
 
-std::any Interpeter::visit_GroupExpr(std::shared_ptr<Group> expr)
+std::any Interpreter::visit_GroupExpr(std::shared_ptr<Group> expr)
 {
    return evaluate(expr->expr_in);
 }
 
-std::any Interpeter::visit_LiteralExpr(std::shared_ptr<Literal> expr)
+std::any Interpreter::visit_LiteralExpr(std::shared_ptr<Literal> expr)
 {
    return expr->value;
 }
 
-std::any Interpeter::visit_UnaryExpr(std::shared_ptr<Unary> expr)
+std::any Interpreter::visit_UnaryExpr(std::shared_ptr<Unary> expr)
 {
    std::any right = evaluate(expr->right);
 
@@ -86,7 +97,7 @@ std::any Interpeter::visit_UnaryExpr(std::shared_ptr<Unary> expr)
 }
 
 // * All objects that are not nill or false are truthy *
-bool Interpeter::is_truthy(std::any object) 
+bool Interpreter::is_truthy(std::any object) 
 {
    if (object.type() == typeid(nullptr)) { return false; }
    if (object.type() == typeid(bool)) 
@@ -96,7 +107,7 @@ bool Interpeter::is_truthy(std::any object)
    return true;
 }
 
-bool Interpeter::is_equal(std::any a, std::any b)
+bool Interpreter::is_equal(std::any a, std::any b)
 {
    if (a.type() == typeid(nullptr) && b.type() == typeid(nullptr)) { return true; }
    if (a.type() == typeid(nullptr)) { return false; }
@@ -117,7 +128,7 @@ bool Interpeter::is_equal(std::any a, std::any b)
    return false;
 }
 
-void Interpeter::assert_number_operand(Token op, std::any object)
+void Interpreter::assert_number_operand(Token op, std::any object)
 {
    if ( object.type() == typeid(double) ) { return; }
    else { 
@@ -125,11 +136,35 @@ void Interpeter::assert_number_operand(Token op, std::any object)
    }
 }
 
-void Interpeter::assert_number_operands(Token op, std::any left, std::any right)
+void Interpreter::assert_number_operands(Token op, std::any left, std::any right)
 {
    if ( left.type() == typeid(double) and right.type() == typeid(double))
    { return; }
    else {
       throw RuntimeError(op, "Operand must be a number."); 
    }
+}
+
+std::string Interpreter::stringfy(std::any object)
+{
+   if (object.type() == typeid(nullptr)) { return "nil"; }
+
+   if (object.type() == typeid(double))
+   {
+      std::string text = std::to_string(std::any_cast<double>(object));
+      if (text[text.length() - 2] == '.' && text[text.length() - 1] == '0') {
+        text = text.substr(0, text.length() - 2);
+      }
+   return text;
+   }
+
+   if (object.type() == typeid(std::string)) {
+      return std::any_cast<std::string>(object);
+   }
+   
+   if (object.type() == typeid(bool)) {
+      return std::any_cast<bool>(object) ? "true" : "false";
+   }
+
+   return "Error in stringify: object type not recognized.";
 }
