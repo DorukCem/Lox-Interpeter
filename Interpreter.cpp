@@ -4,12 +4,14 @@
 #include <iostream>
 
 
-void Interpreter::interpret(std::shared_ptr<Expr> expr)
+void Interpreter::interpret(std::vector<std::shared_ptr<Stmt>> statements)
 {
    try 
    {
-      std::any value = evaluate(expr);
-      std::cout << stringfy(value) << std::endl;
+      for (std::shared_ptr<Stmt> statement : statements) {
+         execute(statement);
+      }
+
    } catch (RuntimeError error) {
       Lox::runtime_error(error);
    }
@@ -18,6 +20,11 @@ void Interpreter::interpret(std::shared_ptr<Expr> expr)
 std::any Interpreter::evaluate(std::shared_ptr<Expr> expr)
 {
    return expr->accept(*this);
+}
+
+void Interpreter::execute(std::shared_ptr<Stmt> stmt)
+{
+   stmt->accept(*this);
 }
 
 std::any Interpreter::visit_BinaryExpr(std::shared_ptr<Binary> expr)
@@ -96,6 +103,28 @@ std::any Interpreter::visit_UnaryExpr(std::shared_ptr<Unary> expr)
    }
 }
 
+std::any Interpreter::visit_ExpressionStmt(std::shared_ptr<Expression> stmt)
+{
+   evaluate(stmt->expression);
+}
+
+std::any Interpreter::visit_PrintStmt(std::shared_ptr<Print> stmt)
+{
+   std::any value = evaluate(stmt->expression);
+   std::cout << stringify(value) << "\n";
+   return {};
+}
+
+std::any Interpreter::visit_VarStmt(std::shared_ptr<Var> stmt)
+{
+   ;
+}
+
+std::any Interpreter::visit_BlockStmt(std::shared_ptr<Block> stmt)
+{
+   ;
+}
+
 // * All objects that are not nill or false are truthy *
 bool Interpreter::is_truthy(std::any object) 
 {
@@ -145,7 +174,7 @@ void Interpreter::assert_number_operands(Token op, std::any left, std::any right
    }
 }
 
-std::string Interpreter::stringfy(std::any object)
+std::string Interpreter::stringify(std::any object)
 {
    if (object.type() == typeid(nullptr)) { return "nil"; }
 

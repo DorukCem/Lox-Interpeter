@@ -9,8 +9,6 @@
 #include <iostream> 
 #include <vector>
 
-
-
 bool Lox::had_error = false;
 bool Lox::had_runtime_error = false;
 Interpreter Lox::interpreter{};
@@ -66,19 +64,12 @@ void Lox::run(std::string source)
 {
    Scanner scanner(source);
    std::vector<Token> tokens = scanner.scan_tokens();
-   // for (Token tok : tokens) 
-   // {
-   //    std::cout << tok.to_string() << " ";
-   // } std::cout << std::endl;
-
    Parser parser{tokens};
-   std::shared_ptr<Expr> expression = parser.parse();
+   std::vector<std::shared_ptr<Stmt>> statements = parser.parse();
+   if (had_error) { 
+      return; }
 
-   // Stop if there was a syntax error.
-   if (had_error) { return; }
-
-   //std::cout << AstPrinter{}.print(expression) << "\n";
-   interpreter.interpret(expression);
+   interpreter.interpret(statements);
 }
 
 void Lox::error(int line, std::string message)

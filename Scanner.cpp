@@ -12,7 +12,7 @@ std::unordered_map<std::string, TokenType> Scanner::keywords = {
    {"if",     IF},
    {"nil",    NIL},
    {"or",     OR},
-   {"print",  PRINT},
+   {"print",  PRINT}, //! maybe change this to echo to avoid namespace conflict with powershell
    {"return", RETURN},
    {"super",  SUPER},
    {"this",   THIS},

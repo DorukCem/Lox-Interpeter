@@ -5,6 +5,7 @@
 #include <stdexcept>
 #include "Token.h"
 #include "Expr.h"
+#include "Statement.h"
 
 struct ParseError : public std::runtime_error 
 {
@@ -14,7 +15,7 @@ struct ParseError : public std::runtime_error
 class Parser {
 public:
    Parser(std::vector<Token>& tokens);
-   std::shared_ptr<Expr> parse();
+   std::vector<std::shared_ptr<Stmt>> parse();
 
 private:
    const std::vector<Token>& tokens;
@@ -38,4 +39,7 @@ private:
    Token consume(TokenType type, std::string message);
    ParseError error(Token token, std::string message);
    void synchronize();
+   std::shared_ptr<Stmt> statement();
+   std::shared_ptr<Stmt> print_statement();
+   std::shared_ptr<Stmt> expression_statement();
 };
