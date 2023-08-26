@@ -4,6 +4,7 @@
 #include <iostream>
 
 
+
 void Interpreter::interpret(std::vector<std::shared_ptr<Stmt>> statements)
 {
    try 
@@ -103,6 +104,11 @@ std::any Interpreter::visit_UnaryExpr(std::shared_ptr<Unary> expr)
    }
 }
 
+std::any Interpreter::visit_VariableExpr( std::shared_ptr<Variable> expr )
+{
+   return environment.get(expr->name);
+}
+
 std::any Interpreter::visit_ExpressionStmt(std::shared_ptr<Expression> stmt)
 {
    evaluate(stmt->expression);
@@ -117,7 +123,13 @@ std::any Interpreter::visit_PrintStmt(std::shared_ptr<Print> stmt)
 
 std::any Interpreter::visit_VarStmt(std::shared_ptr<Var> stmt)
 {
-   ;
+   std::any value = nullptr;
+   if (stmt->initializer != nullptr) {
+      value = evaluate(stmt->initializer);
+   }
+   environment.define(stmt->name.lexeme, value);
+
+   return {}; 
 }
 
 std::any Interpreter::visit_BlockStmt(std::shared_ptr<Block> stmt)

@@ -47,3 +47,12 @@ std::any Unary::accept(ExprVisitor &visitor)
    return visitor.visit_UnaryExpr(shared_from_this());
 }
 
+// *-----------------Variable-----------------------
+
+Variable::Variable(Token name)
+    : name(name)
+  {}
+
+std::any Variable::accept(ExprVisitor& visitor) {
+   return visitor.visit_VariableExpr(shared_from_this());
+}
