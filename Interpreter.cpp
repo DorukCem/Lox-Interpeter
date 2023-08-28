@@ -26,6 +26,25 @@ void Interpreter::execute(std::shared_ptr<Stmt> stmt)
    stmt->accept(*this);
 }
 
+
+void Interpreter::execute_block(std::vector<std::shared_ptr<Stmt>> statements, std::shared_ptr<Environment> a_environment)
+{
+   std::shared_ptr<Environment> previous = this->environment;
+   try {
+      this->environment = a_environment;
+
+      for (std::shared_ptr<Stmt> stmt : statements){
+         execute(stmt);
+      }
+   } catch(...) // *-> Catch anything
+   {
+      this->environment = previous; //*-> Make sure this block always executes and then throw the error again
+      throw;
+   }
+
+   this->environment = previous;
+}
+
 std::any Interpreter::visit_BinaryExpr(std::shared_ptr<Binary> expr)
 {
    std::any right = evaluate(expr->right);
@@ -104,11 +123,9 @@ std::any Interpreter::visit_UnaryExpr(std::shared_ptr<Unary> expr)
 
 std::any Interpreter::visit_VariableExpr( std::shared_ptr<Variable> expr )
 {
-   return environment.get(expr->name);
+   return environment->get(expr->name);
 }
 
-// ? None of the visit_Stmt's do anything after getting called.
-// !! PrintStmt cannot execute after getting called
 std::any Interpreter::visit_ExpressionStmt(std::shared_ptr<Expression> stmt)
 {
    evaluate(stmt->expression);
@@ -128,13 +145,21 @@ std::any Interpreter::visit_VarStmt(std::shared_ptr<Var> stmt)
    if (stmt->initializer != nullptr) {
       value = evaluate(stmt->initializer);
    }
-   environment.define(stmt->name.lexeme, value);
+   environment->define(stmt->name.lexeme, value);
 
    return {}; 
 }
 
+std::any Interpreter::visit_AssignExpr(std::shared_ptr<Assign> expr)
+{
+   std::any value = evaluate(expr->value);
+   environment->assign(expr->name, value);
+   return value;  
+}
+
 std::any Interpreter::visit_BlockStmt(std::shared_ptr<Block> stmt)
 {
+   execute_block(stmt->statements, std::make_shared<Environment>(environment));
    return {};
 }
 

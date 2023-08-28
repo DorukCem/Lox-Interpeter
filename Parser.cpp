@@ -12,7 +12,7 @@ std::vector<std::shared_ptr<Stmt>> Parser::parse()
 {
    std::vector<std::shared_ptr<Stmt>> statements;
    while (!is_at_end()) {
-      statements.push_back( statement() );
+      statements.push_back( declaration() );
    }
    
    return statements; 
@@ -20,7 +20,7 @@ std::vector<std::shared_ptr<Stmt>> Parser::parse()
 
 std::shared_ptr<Expr> Parser::expression()
 {
-   return equality();
+   return assignment();
 }
 
 
@@ -38,10 +38,27 @@ std::shared_ptr<Expr> Parser::equality()
    return expr;
 }
 
-// !!--------------------------
 std::shared_ptr<Expr> Parser::assignment()
 {
-   return nullptr;
+   std::shared_ptr<Expr> expr = equality();
+   
+   if (match(EQUAL)) 
+   {
+      Token equals = previous();
+      std::shared_ptr<Expr> value = assignment();  // ** <- A recursive call
+
+      // * https://stackoverflow.com/questions/19501838/get-derived-type-via-base-class-virtual-function
+      // ** Check if expr is of type Variable
+      if (Variable* e = dynamic_cast<Variable*>(expr.get())) 
+      {
+         Token name = e->name;
+         return std::make_shared<Assign>(name, value);
+      }
+
+      error(equals, "Invalid assignment target.");
+   }
+
+   return expr;
 }
 
 std::shared_ptr<Expr> Parser::comparison()
@@ -113,7 +130,7 @@ std::shared_ptr<Expr> Parser::primary()
       return std::make_shared<Variable>(previous());
    }
 
-   if (match(LEFT_PAREN)) {
+   if (match(LEFT_PAREN)) {   
       std::shared_ptr<Expr> expr = expression();
       consume(RIGHT_PAREN, "Expect ')' after expression.");
       return std::make_shared<Group>(expr);
@@ -214,8 +231,9 @@ void Parser::synchronize()
 std::shared_ptr<Stmt> Parser::statement()
 {
    if (match(PRINT)){ return print_statement(); }
+   if (match(LEFT_BRACE)) { return std::make_shared<Block>(block()); } // -> Initilize a shared pointer to a block object with a vector of statements that is returned by the block() function
    return expression_statement();
-}
+} 
 
 std::shared_ptr<Stmt> Parser::print_statement()
 {
@@ -229,6 +247,19 @@ std::shared_ptr<Stmt> Parser::expression_statement()
    std::shared_ptr<Expr> expr = expression();
    consume(SEMICOLON, "Expect ';' after expression.");
    return std::make_shared<Expression>(expr);
+}
+
+std::vector<std::shared_ptr<Stmt>> Parser::block()
+{
+   std::vector<std::shared_ptr<Stmt>> statements;
+
+   while( !check(RIGHT_BRACE) and !is_at_end() )
+   {
+      statements.push_back(declaration());
+   }
+
+   consume(RIGHT_BRACE, "Expect '}' after block.");
+   return statements;
 }
 
 std::shared_ptr<Stmt> Parser::declaration()
