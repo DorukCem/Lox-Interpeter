@@ -3,8 +3,6 @@
 #include "headers/Lox.h"
 #include <iostream>
 
-
-
 void Interpreter::interpret(std::vector<std::shared_ptr<Stmt>> statements)
 {
    try 
@@ -109,9 +107,12 @@ std::any Interpreter::visit_VariableExpr( std::shared_ptr<Variable> expr )
    return environment.get(expr->name);
 }
 
+// ? None of the visit_Stmt's do anything after getting called.
+// !! PrintStmt cannot execute after getting called
 std::any Interpreter::visit_ExpressionStmt(std::shared_ptr<Expression> stmt)
 {
    evaluate(stmt->expression);
+   return {};
 }
 
 std::any Interpreter::visit_PrintStmt(std::shared_ptr<Print> stmt)
@@ -134,7 +135,7 @@ std::any Interpreter::visit_VarStmt(std::shared_ptr<Var> stmt)
 
 std::any Interpreter::visit_BlockStmt(std::shared_ptr<Block> stmt)
 {
-   ;
+   return {};
 }
 
 // * All objects that are not nill or false are truthy *

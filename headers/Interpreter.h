@@ -5,7 +5,6 @@
 
 class Interpreter : public ExprVisitor, public StmtVisitor {
 public:
-   Interpreter();
    std::any visit_BinaryExpr (std::shared_ptr<Binary> expr)    override;
    std::any visit_GroupExpr  (std::shared_ptr<Group> expr)     override;
    std::any visit_LiteralExpr(std::shared_ptr<Literal> expr)   override;
@@ -15,6 +14,8 @@ public:
    std::any visit_PrintStmt      (std::shared_ptr<Print> stmt)      override;
    std::any visit_VarStmt        (std::shared_ptr<Var> stmt)        override;
    std::any visit_BlockStmt      (std::shared_ptr<Block> stmt)      override;
+   ~Interpreter() = default ;
+
    void interpret(std::vector<std::shared_ptr<Stmt>> staments);
    Environment environment;
 

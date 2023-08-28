@@ -1,8 +1,7 @@
 #include "headers/Parser.h"
 #include "headers/Lox.h"
 #include <cassert>
-
-// ? For some reason test.lox has to start with a literal
+#include <iostream>
 
 Parser::Parser(std::vector<Token>& tokens)
    :tokens(tokens)
@@ -13,16 +12,17 @@ std::vector<std::shared_ptr<Stmt>> Parser::parse()
 {
    std::vector<std::shared_ptr<Stmt>> statements;
    while (!is_at_end()) {
-      statements.push_back( declaration() );
+      statements.push_back( statement() );
    }
-
-    return statements; 
+   
+   return statements; 
 }
 
 std::shared_ptr<Expr> Parser::expression()
 {
    return equality();
 }
+
 
 std::shared_ptr<Expr> Parser::equality()
 {
@@ -36,6 +36,12 @@ std::shared_ptr<Expr> Parser::equality()
    }
 
    return expr;
+}
+
+// !!--------------------------
+std::shared_ptr<Expr> Parser::assignment()
+{
+   return nullptr;
 }
 
 std::shared_ptr<Expr> Parser::comparison()
@@ -92,6 +98,7 @@ std::shared_ptr<Expr> Parser::unary()
    return primary();
 }
 
+// ! this is the last stop of recursion
 std::shared_ptr<Expr> Parser::primary()
 {
    if (match(LOX_FALSE)) return std::make_shared<Literal>(false);
@@ -207,7 +214,6 @@ void Parser::synchronize()
 std::shared_ptr<Stmt> Parser::statement()
 {
    if (match(PRINT)){ return print_statement(); }
-
    return expression_statement();
 }
 

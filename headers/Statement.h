@@ -9,10 +9,10 @@ struct Print;
 struct Var;
 
 struct StmtVisitor {
-  virtual std::any visit_BlockStmt(std::shared_ptr<Block> stmt) = 0;
-  virtual std::any visit_ExpressionStmt(std::shared_ptr<Expression> stmt) = 0;
-  virtual std::any visit_PrintStmt(std::shared_ptr<Print> stmt) = 0;
-  virtual std::any visit_VarStmt(std::shared_ptr<Var> stmt) = 0;
+  virtual std::any visit_BlockStmt      (std::shared_ptr<Block> stmt)      = 0;
+  virtual std::any visit_ExpressionStmt (std::shared_ptr<Expression> stmt) = 0;
+  virtual std::any visit_PrintStmt      (std::shared_ptr<Print> stmt)      = 0;
+  virtual std::any visit_VarStmt        (std::shared_ptr<Var> stmt)        = 0;
   virtual ~StmtVisitor() = default;
 };
 

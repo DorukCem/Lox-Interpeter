@@ -1,5 +1,5 @@
 CC := g++
-CFLAGS := -Wall -g
+CFLAGS := -Wall -g 
 TARGET := main
 
 # $(wildcard *.cpp /xxx/xxx/*.cpp): get all .cpp files from the current directory and dir "/xxx/xxx/"
@@ -13,4 +13,4 @@ $(TARGET): $(OBJS)
 %.o: %.cpp
 	$(CC) $(CFLAGS) -c $<
 clean:
-	rm -rf $(TARGET) *.o
+	rm *.o
