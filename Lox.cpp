@@ -79,7 +79,7 @@ void Lox::error(int line, std::string message)
 
 void Lox::report(int line, std::string where,  std::string message)
 {
-   std::cout << "[line " << line << "] Error" << where << ": " << message << std::endl;
+   std::cerr << "[line " << line << "] Error" << where << ": " << message << "\n";
    had_error = true;
 }
 
@@ -97,6 +97,6 @@ void Lox::error(Token token, std::string message)
 
 void Lox::runtime_error(RuntimeError error)
 {
-   std::cout << error.what() << std::endl << "[line " << error.token.line << "]";
+   std::cerr << error.what() << std::endl << "[line " << error.token.line << "]\n";
    had_runtime_error = true; 
 }

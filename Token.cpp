@@ -1,7 +1,7 @@
 #include "headers/Token.h"
 
 
-Token::Token(TokenType a_type, std::string a_lexeme, std::any a_literal, unsigned int a_line)
+Token::Token(TokenType a_type, std::string a_lexeme, std::any a_literal, int a_line)
 :  type(a_type),
    lexeme(a_lexeme),
    literal(a_literal),

@@ -30,9 +30,9 @@ class Token
    const TokenType type;       
    std::string lexeme;  // The group of characters
    std::any literal;    // The actual value that the token is holding, if any 
-   const unsigned line; // For better errror reporting
+   const int line; // For better errror reporting
 
-   Token(TokenType a_type, std::string a_lexeme, std::any a_literal, unsigned int a_line);
+   Token(TokenType a_type, std::string a_lexeme, std::any a_literal, int a_line);
    std::string to_string() const;
 };
 

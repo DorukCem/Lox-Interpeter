@@ -23,10 +23,11 @@ std::any Environment::get(Token name)
 
    //* If the variable isn’t found in this environment, we recursively try the enclosing one.
    if (enclosing != nullptr) { return enclosing->get(name); }
-      
+   
    throw RuntimeError(name, "Undefined variable '" + name.lexeme + "'.");
 }
 
+#include <iostream>
 void Environment::assign(Token name, std::any value)
 {
    if (values.find(name.lexeme) != values.end())
@@ -41,6 +42,6 @@ void Environment::assign(Token name, std::any value)
       enclosing->assign(name, value);
       return;
    }
-   
+ 
    throw RuntimeError(name, "Undefined variable '"+ name.lexeme + "'."); 
 }

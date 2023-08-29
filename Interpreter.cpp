@@ -11,14 +11,9 @@ void Interpreter::interpret(std::vector<std::shared_ptr<Stmt>> statements)
          execute(statement);
       }
 
-   } catch (RuntimeError error) {
+   } catch (RuntimeError const& error) {
       Lox::runtime_error(error);
    }
-}
-
-std::any Interpreter::evaluate(std::shared_ptr<Expr> expr)
-{
-   return expr->accept(*this);
 }
 
 void Interpreter::execute(std::shared_ptr<Stmt> stmt)
@@ -26,6 +21,10 @@ void Interpreter::execute(std::shared_ptr<Stmt> stmt)
    stmt->accept(*this);
 }
 
+std::any Interpreter::evaluate(std::shared_ptr<Expr> expr)
+{
+   return expr->accept(*this);
+}
 
 void Interpreter::execute_block(std::vector<std::shared_ptr<Stmt>> statements, std::shared_ptr<Environment> a_environment)
 {
@@ -38,7 +37,7 @@ void Interpreter::execute_block(std::vector<std::shared_ptr<Stmt>> statements, s
       }
    } catch(...) // *-> Catch anything
    {
-      this->environment = previous; //*-> Make sure this block always executes and then throw the error again
+      this->environment = previous; //*-> this block always executes and then throw the error again
       throw;
    }
 

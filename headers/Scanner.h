@@ -15,7 +15,7 @@ private:
    std::vector<Token> tokens;
    unsigned int start = 0;
    unsigned int current = 0;
-   unsigned int line = 1;
+   int line = 1;
 private:
    void scan_token();
    char advance() { return source[current++]; }
