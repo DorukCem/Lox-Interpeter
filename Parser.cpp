@@ -197,9 +197,65 @@ std::shared_ptr<Stmt> Parser::statement()
    if (match(PRINT)){ return print_statement(); }
    if (match(WHILE)){ return while_statement(); }
    if (match(LEFT_BRACE)) { return std::make_shared<Block>(block()); } // -> Initilize a shared pointer to a block object with a vector of statements that is returned by the block() function
+   if (match(FOR)) { return for_statement(); }
    if (match(IF)) { return if_statement(); }
    return expression_statement();
 } 
+
+/*
+   for (var i = 0; i < 10; i = i + 1)
+   {
+      do_something()
+   }
+*/
+std::shared_ptr<Stmt> Parser::for_statement()
+{
+   consume(LEFT_PAREN, "Expect '(' after 'for'.");
+
+   std::shared_ptr<Stmt> initializer;
+   if (match(SEMICOLON)) 
+   {
+      initializer = nullptr;
+   } 
+   else if (match(VAR)) 
+   {
+      initializer = var_declaration();
+   } 
+   else 
+   {
+      initializer = expression_statement();
+   }
+
+   std::shared_ptr<Expr> condition = nullptr;
+   if ( !check(SEMICOLON) ) 
+   {
+      condition = expression();
+   }
+   consume(SEMICOLON, "Expect ';' after loop condition.");
+
+   std::shared_ptr<Expr> increment = nullptr;
+   if (!check(RIGHT_PAREN)) 
+   {
+      increment = expression();
+   }
+   consume(RIGHT_PAREN, "Expect ')' after for clauses.");
+
+   std::shared_ptr<Stmt> body = statement();
+
+   if (increment != nullptr)
+   {
+      body = std::make_shared<Block>( std::vector<std::shared_ptr<Stmt>> { body, std::make_shared<Expression>(increment) } );
+   }
+
+   if (condition == nullptr) { condition = std::make_shared<Literal>(true); }
+   body = std::make_shared<While>(condition, body);
+
+   if (initializer != nullptr) {
+      body = std::make_shared<Block>(std::vector<std::shared_ptr<Stmt>> {initializer, body} );
+   }
+
+   return body;
+}
 
 std::shared_ptr<Stmt> Parser::if_statement()
 {
