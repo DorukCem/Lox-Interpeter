@@ -104,6 +104,22 @@ std::any Interpreter::visit_LiteralExpr(std::shared_ptr<Literal> expr)
    return expr->value;
 }
 
+std::any Interpreter::visit_LogicalExpr(std::shared_ptr<Logical> expr)
+{
+   std::any left = evaluate(expr->left);
+
+   if (expr->op.type == TokenType::OR)
+   {
+      if (is_truthy(left)) { return left; }
+   }
+   else
+   {
+      if (!is_truthy(left)) { return left; }
+   }
+
+   return evaluate(expr->right);
+}
+
 std::any Interpreter::visit_UnaryExpr(std::shared_ptr<Unary> expr)
 {
    std::any right = evaluate(expr->right);

@@ -51,8 +51,8 @@ std::shared_ptr<Expr> Parser::expression()
  
 std::shared_ptr<Expr> Parser::assignment()
 {
-   std::shared_ptr<Expr> expr = equality();
-   
+   std::shared_ptr<Expr> expr = or_expression();
+
    if (match(EQUAL)) 
    {
       Token equals = previous();
@@ -69,6 +69,34 @@ std::shared_ptr<Expr> Parser::assignment()
       error(equals, "Invalid assignment target.");
    }
 
+   return expr;
+}
+
+std::shared_ptr<Expr> Parser::or_expression()
+{
+   std::shared_ptr<Expr> expr = and_expression();
+
+   while (match(OR))
+   {
+      Token op = previous();
+      std::shared_ptr<Expr> right = equality();
+      expr = std::make_shared<Logical>(expr, op, right);
+   }
+   
+   return expr;
+}
+
+std::shared_ptr<Expr> Parser::and_expression()
+{
+   std::shared_ptr<Expr> expr = equality();
+
+   while (match(AND))
+   {
+      Token op = previous();
+      std::shared_ptr<Expr> right = equality();
+      expr = std::make_shared<Logical>(expr, op, right);
+   }
+   
    return expr;
 }
 

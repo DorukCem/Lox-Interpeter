@@ -68,3 +68,14 @@ std::any Assign::accept(ExprVisitor& visitor)
 {
    return visitor.visit_AssignExpr(shared_from_this());
 }
+
+// *-----------------Logical-----------------------
+
+Logical::Logical(std::shared_ptr<Expr> left, Token op, std::shared_ptr<Expr> right)
+   :left(left), op(op), right(right)
+{ }
+
+std::any Logical::accept(ExprVisitor& visitor)
+{
+  return visitor.visit_LogicalExpr(shared_from_this());
+}
