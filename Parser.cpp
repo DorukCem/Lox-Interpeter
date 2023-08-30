@@ -207,6 +207,8 @@ std::shared_ptr<Stmt> Parser::statement()
    {
       do_something()
    }
+   
+   The for statement gets converted into a while statement
 */
 std::shared_ptr<Stmt> Parser::for_statement()
 {
