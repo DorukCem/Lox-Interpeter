@@ -40,3 +40,12 @@ If::If(std::shared_ptr<Expr> condition, std::shared_ptr<Stmt> then_branch, std::
 std::any If::accept(StmtVisitor& visitor){
   return visitor.visit_IfStmt(shared_from_this()); 
 }
+
+While::While(std::shared_ptr<Expr> condition, std::shared_ptr<Stmt> body)
+    : condition(condition), body(body)
+  {}
+
+std::any While::accept(StmtVisitor& visitor)
+{
+  return visitor.visit_WhileStmt(shared_from_this());
+}

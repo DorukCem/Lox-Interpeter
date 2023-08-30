@@ -195,6 +195,7 @@ std::shared_ptr<Expr> Parser::primary()
 std::shared_ptr<Stmt> Parser::statement()
 {
    if (match(PRINT)){ return print_statement(); }
+   if (match(WHILE)){ return while_statement(); }
    if (match(LEFT_BRACE)) { return std::make_shared<Block>(block()); } // -> Initilize a shared pointer to a block object with a vector of statements that is returned by the block() function
    if (match(IF)) { return if_statement(); }
    return expression_statement();
@@ -213,6 +214,16 @@ std::shared_ptr<Stmt> Parser::if_statement()
    }
    
    return std::make_shared<If>(condition, then_branch, else_branch);
+}
+
+std::shared_ptr<Stmt> Parser::while_statement()
+{
+   consume(LEFT_PAREN, "Expect '(' after 'while'.");
+   std::shared_ptr<Expr> condition = expression();
+   consume(RIGHT_PAREN, "Expect ')' after condition.");
+   std::shared_ptr<Stmt> body = statement();
+
+   return std::make_shared<While>(condition, body);
 }
 
 std::shared_ptr<Stmt> Parser::print_statement()

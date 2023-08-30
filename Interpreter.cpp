@@ -141,6 +141,13 @@ std::any Interpreter::visit_VariableExpr( std::shared_ptr<Variable> expr )
    return environment->get(expr->name);
 }
 
+std::any Interpreter::visit_AssignExpr(std::shared_ptr<Assign> expr)
+{
+   std::any value = evaluate(expr->value);
+   environment->assign(expr->name, value);
+   return value;  
+}
+
 std::any Interpreter::visit_ExpressionStmt(std::shared_ptr<Expression> stmt)
 {
    evaluate(stmt->expression);
@@ -178,11 +185,14 @@ std::any Interpreter::visit_VarStmt(std::shared_ptr<Var> stmt)
    return {}; 
 }
 
-std::any Interpreter::visit_AssignExpr(std::shared_ptr<Assign> expr)
+std::any Interpreter::visit_WhileStmt(std::shared_ptr<While> stmt)
 {
-   std::any value = evaluate(expr->value);
-   environment->assign(expr->name, value);
-   return value;  
+   while (is_truthy(evaluate(stmt->condition)))
+   {
+      execute(stmt->body);
+   }
+
+   return {};
 }
 
 std::any Interpreter::visit_BlockStmt(std::shared_ptr<Block> stmt)

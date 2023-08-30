@@ -17,6 +17,7 @@ public:
    std::any visit_VarStmt        (std::shared_ptr<Var> stmt)        override;
    std::any visit_BlockStmt      (std::shared_ptr<Block> stmt)      override;
    std::any visit_IfStmt         (std::shared_ptr<If> stmt)         override;
+   std::any visit_WhileStmt      (std::shared_ptr<While> stmt)      override;
    ~Interpreter() = default ;
 
    void interpret(std::vector<std::shared_ptr<Stmt>> staments);
