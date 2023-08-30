@@ -32,3 +32,11 @@ Var::Var(Token name, std::shared_ptr<Expr> initializer)
 std::any Var::accept(StmtVisitor& visitor) {
     return visitor.visit_VarStmt(shared_from_this());
   }
+
+If::If(std::shared_ptr<Expr> condition, std::shared_ptr<Stmt> then_branch, std::shared_ptr<Stmt> else_branch)
+    : condition(condition), then_branch(then_branch), else_branch(else_branch) 
+ {}
+
+std::any If::accept(StmtVisitor& visitor){
+  return visitor.visit_IfStmt(shared_from_this()); 
+}

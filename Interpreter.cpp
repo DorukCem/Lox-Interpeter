@@ -131,6 +131,19 @@ std::any Interpreter::visit_ExpressionStmt(std::shared_ptr<Expression> stmt)
    return {};
 }
 
+
+std::any Interpreter::visit_IfStmt(std::shared_ptr<If> stmt)
+{
+   if (is_truthy(evaluate(stmt->condition)))
+   {
+      execute(stmt->then_branch);
+   }
+   else if (stmt->else_branch != nullptr) {
+      execute(stmt->else_branch);
+   }
+   return {};
+}
+
 std::any Interpreter::visit_PrintStmt(std::shared_ptr<Print> stmt)
 {
    std::any value = evaluate(stmt->expression);

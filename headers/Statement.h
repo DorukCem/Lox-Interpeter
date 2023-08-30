@@ -7,12 +7,14 @@ struct Block;
 struct Expression;
 struct Print;
 struct Var;
+struct If;
 
 struct StmtVisitor {
   virtual std::any visit_BlockStmt      (std::shared_ptr<Block> stmt)      = 0;
   virtual std::any visit_ExpressionStmt (std::shared_ptr<Expression> stmt) = 0;
   virtual std::any visit_PrintStmt      (std::shared_ptr<Print> stmt)      = 0;
   virtual std::any visit_VarStmt        (std::shared_ptr<Var> stmt)        = 0;
+  virtual std::any visit_IfStmt         (std::shared_ptr<If> stmt)         = 0;
   virtual ~StmtVisitor() = default;
 };
 
@@ -43,4 +45,12 @@ struct Var: Stmt, public std::enable_shared_from_this<Var> {
   std::any accept(StmtVisitor& visitor) override;
   const Token name;
   const std::shared_ptr<Expr> initializer;
+};
+
+struct If: Stmt, public std::enable_shared_from_this<If> {
+  If(std::shared_ptr<Expr> condition, std::shared_ptr<Stmt> then_branch, std::shared_ptr<Stmt> else_branch);
+  std::any accept(StmtVisitor& visitor) override;
+  const std::shared_ptr<Expr> condition;
+  const std::shared_ptr<Stmt> then_branch;
+  const std::shared_ptr<Stmt> else_branch;
 };
