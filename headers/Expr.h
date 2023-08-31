@@ -1,7 +1,7 @@
 #pragma once
 #include <memory>
+#include <vector>
 #include "Token.h"
-
 
 struct Binary;
 struct Group;
@@ -10,6 +10,7 @@ struct Unary;
 struct Variable;
 struct Assign;
 struct Logical;
+struct Call;
 
 struct ExprVisitor {
   virtual std::any visit_BinaryExpr  (std::shared_ptr<Binary> expr)   = 0;
@@ -18,7 +19,8 @@ struct ExprVisitor {
   virtual std::any visit_UnaryExpr   (std::shared_ptr<Unary> expr)    = 0;
   virtual std::any visit_VariableExpr(std::shared_ptr<Variable> expr) = 0;
   virtual std::any visit_AssignExpr  (std::shared_ptr<Assign> expr)   = 0;
-  virtual std::any visit_LogicalExpr (std::shared_ptr<Logical> expr)  = 0;
+  virtual std::any visit_LogicalExpr  (std::shared_ptr<Logical> expr) = 0;
+  virtual std::any visit_CallExpr (std::shared_ptr<Call> expr)     = 0;
   virtual ~ExprVisitor() = default;
 };
 
@@ -101,4 +103,14 @@ struct Logical: Expr, public std::enable_shared_from_this<Logical> {
   const std::shared_ptr<Expr> left;
   const Token op;
   const std::shared_ptr<Expr> right;
+};
+
+struct Call: Expr, public std::enable_shared_from_this<Call> {
+  Call(std::shared_ptr<Expr> calle, Token paren, std::vector<std::shared_ptr<Expr>> arguements);
+
+  std::any accept(ExprVisitor& visitor) override;
+
+  const std::shared_ptr<Expr> calle;
+  const Token paren;
+  const std::vector<std::shared_ptr<Expr>> arguements;
 };

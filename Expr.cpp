@@ -79,3 +79,14 @@ std::any Logical::accept(ExprVisitor& visitor)
 {
   return visitor.visit_LogicalExpr(shared_from_this());
 }
+
+// *-----------------Call-----------------------
+
+Call::Call(std::shared_ptr<Expr> calle, Token paren, std::vector<std::shared_ptr<Expr>> arguements)
+   :calle(calle), paren(paren), arguements(arguements)
+{}
+
+std::any Call::accept(ExprVisitor& visitor)
+{
+   return visitor.visit_CallExpr(shared_from_this());
+}
