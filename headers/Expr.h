@@ -19,8 +19,8 @@ struct ExprVisitor {
   virtual std::any visit_UnaryExpr   (std::shared_ptr<Unary> expr)    = 0;
   virtual std::any visit_VariableExpr(std::shared_ptr<Variable> expr) = 0;
   virtual std::any visit_AssignExpr  (std::shared_ptr<Assign> expr)   = 0;
-  virtual std::any visit_LogicalExpr  (std::shared_ptr<Logical> expr) = 0;
-  virtual std::any visit_CallExpr (std::shared_ptr<Call> expr)     = 0;
+  virtual std::any visit_LogicalExpr (std::shared_ptr<Logical> expr)  = 0;
+  virtual std::any visit_CallExpr    (std::shared_ptr<Call> expr)     = 0;
   virtual ~ExprVisitor() = default;
 };
 

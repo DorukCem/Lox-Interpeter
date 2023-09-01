@@ -49,3 +49,12 @@ std::any While::accept(StmtVisitor& visitor)
 {
   return visitor.visit_WhileStmt(shared_from_this());
 }
+
+Function::Function(Token name, std::vector<Token> params, std::vector<std::shared_ptr<Stmt>> body)
+  : name(name), params(params), body(body)
+{ }
+
+std::any Function::accept(StmtVisitor& visitor)
+{
+  return visitor.visit_FunctionStmt(shared_from_this());
+}

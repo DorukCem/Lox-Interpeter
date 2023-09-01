@@ -1,7 +1,11 @@
-#include "headers/Interpreter.h"
-
+#include "headers/LoxFunction.h"
 #include "headers/Lox.h"
 #include <iostream>
+
+Interpreter::Interpreter()
+{
+   global_environment->define("clock", std::shared_ptr<NativeClock>{});
+}
 
 void Interpreter::interpret(std::vector<std::shared_ptr<Stmt>> statements)
 {
@@ -148,12 +152,34 @@ std::any Interpreter::visit_AssignExpr(std::shared_ptr<Assign> expr)
    return value;  
 }
 
+std::any Interpreter::visit_CallExpr(std::shared_ptr<Call> expr)
+{
+   std::any callee = evaluate(expr->calle);
+
+   std::vector<std::any> arguments;
+   for (std::shared_ptr<Expr> argument : expr->arguements)
+   {
+      arguments.push_back(evaluate(argument));
+   }
+
+   std::shared_ptr<LoxCallable> function;
+   if (callee.type() == typeid(std::shared_ptr<LoxFunction>)) {
+      function = std::any_cast<std::shared_ptr<LoxFunction>>(callee);
+   } else {
+      throw RuntimeError{expr->paren, "Can only call functions and classes."};
+   }
+
+   if (static_cast<int>(arguments.size()) != function->arity()) {
+      throw RuntimeError{ expr->paren, "Expected " + std::to_string(function->arity()) + " arguments but got " + std::to_string(arguments.size()) + "."}; }
+
+   return function->call(*this, std::move(arguments));
+}
+
 std::any Interpreter::visit_ExpressionStmt(std::shared_ptr<Expression> stmt)
 {
    evaluate(stmt->expression);
    return {};
 }
-
 
 std::any Interpreter::visit_IfStmt(std::shared_ptr<If> stmt)
 {
@@ -198,6 +224,13 @@ std::any Interpreter::visit_WhileStmt(std::shared_ptr<While> stmt)
 std::any Interpreter::visit_BlockStmt(std::shared_ptr<Block> stmt)
 {
    execute_block(stmt->statements, std::make_shared<Environment>(environment));
+   return {};
+}
+
+std::any Interpreter::visit_FunctionStmt(std::shared_ptr<Function> stmt)
+{
+   auto function = std::make_shared<LoxFunction>(stmt);
+   environment->define(stmt->name.lexeme, function);
    return {};
 }
 

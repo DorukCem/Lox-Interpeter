@@ -9,6 +9,7 @@ struct Print;
 struct Var;
 struct If;
 struct While;
+struct Function;
 
 struct StmtVisitor {
   virtual std::any visit_BlockStmt      (std::shared_ptr<Block> stmt)      = 0;
@@ -16,7 +17,8 @@ struct StmtVisitor {
   virtual std::any visit_PrintStmt      (std::shared_ptr<Print> stmt)      = 0;
   virtual std::any visit_VarStmt        (std::shared_ptr<Var> stmt)        = 0;
   virtual std::any visit_IfStmt         (std::shared_ptr<If> stmt)         = 0;
-  virtual std::any visit_WhileStmt         (std::shared_ptr<While> stmt)         = 0;
+  virtual std::any visit_WhileStmt      (std::shared_ptr<While> stmt)      = 0;
+  virtual std::any visit_FunctionStmt   (std::shared_ptr<Function> stmt)   = 0;
   virtual ~StmtVisitor() = default;
 };
 
@@ -62,4 +64,12 @@ struct While: Stmt, public std::enable_shared_from_this<While> {
   std::any accept(StmtVisitor& visitor) override;
   const std::shared_ptr<Expr> condition;
   const std::shared_ptr<Stmt> body;
+};
+
+struct Function: Stmt, public std::enable_shared_from_this<Function> {
+  Function( Token name, std::vector<Token> params, std::vector<std::shared_ptr<Stmt>> body);
+  std::any accept(StmtVisitor& visitor) override;
+  const Token name;
+  const std::vector<Token> params;
+  const std::vector<std::shared_ptr<Stmt>> body;
 };
