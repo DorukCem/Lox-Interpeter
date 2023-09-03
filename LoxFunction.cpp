@@ -3,13 +3,13 @@
 #include "headers/Interpreter.h"
 #include "headers/RuntimeError.h"
 
-LoxFunction::LoxFunction(std::shared_ptr<Function> declaration)
-   :declaration(declaration)
+LoxFunction::LoxFunction(std::shared_ptr<Function> declaration,  std::shared_ptr<Environment> closure)
+   :declaration(declaration), closure(closure)
 { }
 
 std::any LoxFunction::call(Interpreter& interpeter, std::vector<std::any> arguments)
 {
-   auto environment = std::make_shared<Environment>(interpeter.global_environment);
+   std::shared_ptr<Environment> environment = closure; // ! Might have a problem here in the future
    for (int i = 0; i < static_cast<int>(declaration->params.size()); i++)
    {
       environment->define(declaration->params[i].lexeme, arguments[i]);

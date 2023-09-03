@@ -239,7 +239,7 @@ std::any Interpreter::visit_BlockStmt(std::shared_ptr<Block> stmt)
 
 std::any Interpreter::visit_FunctionStmt(std::shared_ptr<Function> stmt)
 {
-   auto function = std::make_shared<LoxFunction>(stmt);
+   auto function = std::make_shared<LoxFunction>(stmt, environment);
    environment->define(stmt->name.lexeme, function);
    return {};
 }
