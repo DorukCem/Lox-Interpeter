@@ -58,3 +58,12 @@ std::any Function::accept(StmtVisitor& visitor)
 {
   return visitor.visit_FunctionStmt(shared_from_this());
 }
+
+Return::Return(Token keyword, std::shared_ptr<Expr> value)
+  : keyword(keyword), value(value)
+{ }
+
+std::any Return::accept(StmtVisitor& visitor)
+{
+  return visitor.visit_ReturnStmt(shared_from_this());
+}

@@ -11,3 +11,8 @@ public:
       : std::runtime_error(message.data()), token(token)
    {}
 };
+
+struct LoxReturn{
+public:
+   const std::any value;
+};

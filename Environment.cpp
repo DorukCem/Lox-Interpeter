@@ -7,13 +7,14 @@ Environment::Environment()
 
 Environment::Environment(std::shared_ptr<Environment> enclosing)
    :enclosing(enclosing)
-{ }
+{}
 
 void Environment::define(std::string name, std::any value)
 {
    values[name] = value;
 }
 
+//! We cannot find recursive functions
 std::any Environment::get(Token name)
 {
    if (values.find(name.lexeme) != values.end())
@@ -42,6 +43,6 @@ void Environment::assign(Token name, std::any value)
       enclosing->assign(name, value);
       return;
    }
- 
+
    throw RuntimeError(name, "Undefined variable '"+ name.lexeme + "'."); 
 }

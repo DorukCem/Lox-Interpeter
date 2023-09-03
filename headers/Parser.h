@@ -49,6 +49,7 @@ private:
    std::shared_ptr<Stmt> if_statement();
    std::shared_ptr<Stmt> while_statement();
    std::shared_ptr<Stmt> print_statement();
+   std::shared_ptr<Stmt> return_statement();
    std::shared_ptr<Stmt> expression_statement();
    std::shared_ptr<Stmt> declaration();
    std::shared_ptr<Stmt> var_declaration();

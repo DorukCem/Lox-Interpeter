@@ -22,16 +22,17 @@ public:
    std::any visit_IfStmt         (std::shared_ptr<If> stmt)         override;
    std::any visit_WhileStmt      (std::shared_ptr<While> stmt)      override;
    std::any visit_FunctionStmt   (std::shared_ptr<Function> stmt)   override;
+   std::any visit_ReturnStmt     (std::shared_ptr<Return> stmt)     override;
    Interpreter();
    ~Interpreter() = default ;
 
    void interpret(std::vector<std::shared_ptr<Stmt>> staments);
    void execute_block(std::vector<std::shared_ptr<Stmt>> statements, std::shared_ptr<Environment> environment);
-public:
-   std::shared_ptr<Environment> global_environment = std::make_shared<Environment>();
-private:
-   //* Environments can hold a reference to their enclosing (parent) environement and that is why we use a shared pointer 
-   std::shared_ptr<Environment> environment = std::make_shared<Environment>();
+
+//* Environments can hold a reference to their enclosing (parent) environement and that is why we use a shared pointer 
+public: std::shared_ptr<Environment> global_environment{std::make_shared<Environment>()};
+private: std::shared_ptr<Environment> environment = global_environment;
+   
 private:
    std::any evaluate(std::shared_ptr<Expr> expr);
    void execute(std::shared_ptr<Stmt> stmt);

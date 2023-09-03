@@ -230,6 +230,7 @@ std::shared_ptr<Expr> Parser::primary()
 std::shared_ptr<Stmt> Parser::statement()
 {
    if (match(PRINT)){ return print_statement(); }
+   if (match(RETURN)){ return return_statement(); }
    if (match(WHILE)){ return while_statement(); }
    if (match(LEFT_BRACE)) { return std::make_shared<Block>(block()); } // -> Initilize a shared pointer to a block object with a vector of statements that is returned by the block() function
    if (match(FOR)) { return for_statement(); }
@@ -238,6 +239,7 @@ std::shared_ptr<Stmt> Parser::statement()
 } 
 
 /*
+   The sytax is:
    for (var i = 0; i < 10; i = i + 1)
    {
       do_something()
@@ -324,6 +326,18 @@ std::shared_ptr<Stmt> Parser::print_statement()
    std::shared_ptr<Expr> value = expression();
    consume(SEMICOLON, "Expect ';' after value.");
    return std::make_shared<Print>(value);
+}
+
+std::shared_ptr<Stmt> Parser::return_statement()
+{
+   Token keyword = previous();
+   std::shared_ptr<Expr> value = nullptr;
+   if (!check(SEMICOLON)) {
+      value = expression();
+   }
+
+   consume(SEMICOLON, "Expect ';' after return value.");
+   return std::make_shared<Return>(keyword, value);
 }
 
 std::shared_ptr<Stmt> Parser::expression_statement()

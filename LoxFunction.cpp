@@ -1,11 +1,11 @@
 #include "headers/LoxFunction.h"
 #include "headers/Environment.h"
 #include "headers/Interpreter.h"
+#include "headers/RuntimeError.h"
 
 LoxFunction::LoxFunction(std::shared_ptr<Function> declaration)
    :declaration(declaration)
 { }
-
 
 std::any LoxFunction::call(Interpreter& interpeter, std::vector<std::any> arguments)
 {
@@ -14,8 +14,11 @@ std::any LoxFunction::call(Interpreter& interpeter, std::vector<std::any> argume
    {
       environment->define(declaration->params[i].lexeme, arguments[i]);
    }
-
-   interpeter.execute_block(std::vector<std::shared_ptr<Stmt>>{declaration->body}, environment);
+   try {
+      interpeter.execute_block(std::vector<std::shared_ptr<Stmt>>{declaration->body}, environment);
+   } catch (LoxReturn return_value) {
+      return return_value.value;
+   }
    return nullptr;
 }
 

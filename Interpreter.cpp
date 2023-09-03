@@ -5,6 +5,7 @@
 Interpreter::Interpreter()
 {
    global_environment->define("clock", std::shared_ptr<NativeClock>{});
+
 }
 
 void Interpreter::interpret(std::vector<std::shared_ptr<Stmt>> statements)
@@ -198,6 +199,15 @@ std::any Interpreter::visit_PrintStmt(std::shared_ptr<Print> stmt)
    std::any value = evaluate(stmt->expression);
    std::cout << stringify(value) << "\n";
    return {};
+}
+
+std::any Interpreter::visit_ReturnStmt(std::shared_ptr<Return> stmt)
+{
+   std::any value = nullptr;
+   if (stmt->value != nullptr) { 
+      value = evaluate(stmt->value); 
+   }  
+   throw LoxReturn{value};
 }
 
 std::any Interpreter::visit_VarStmt(std::shared_ptr<Var> stmt)
