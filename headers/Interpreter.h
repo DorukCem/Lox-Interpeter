@@ -28,6 +28,7 @@ public:
 
    void interpret(std::vector<std::shared_ptr<Stmt>> staments);
    void execute_block(std::vector<std::shared_ptr<Stmt>> statements, std::shared_ptr<Environment> environment);
+   void resolve(std::shared_ptr<Expr> expr, int depth);
 
 //* Environments can hold a reference to their enclosing (parent) environement and that is why we use a shared pointer 
 public: std::shared_ptr<Environment> global_environment{std::make_shared<Environment>()};

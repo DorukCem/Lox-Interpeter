@@ -49,6 +49,11 @@ void Interpreter::execute_block(std::vector<std::shared_ptr<Stmt>> statements, s
    this->environment = previous;
 }
 
+void Interpreter::resolve(std::shared_ptr<Expr> expr, int depth)
+{
+   ;
+}
+
 std::any Interpreter::visit_BinaryExpr(std::shared_ptr<Binary> expr)
 {
    std::any right = evaluate(expr->right);
