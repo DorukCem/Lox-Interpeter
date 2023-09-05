@@ -4,6 +4,7 @@
 #include "Environment.h"
 #include "LoxCallable.h"
 #include <chrono>
+#include "map"
 
 class Interpreter : public ExprVisitor, public StmtVisitor {
 public:
@@ -32,7 +33,9 @@ public:
 
 //* Environments can hold a reference to their enclosing (parent) environement and that is why we use a shared pointer 
 public: std::shared_ptr<Environment> global_environment{std::make_shared<Environment>()};
-private: std::shared_ptr<Environment> environment = global_environment;
+private: 
+   std::shared_ptr<Environment> environment = global_environment;
+   std::map<std::shared_ptr<Expr>, int> locals;
    
 private:
    std::any evaluate(std::shared_ptr<Expr> expr);
@@ -42,6 +45,7 @@ private:
    void assert_number_operand(Token op, std::any object);
    void assert_number_operands(Token op, std::any left, std::any right);
    std::string stringify(std::any object);
+   std::any look_up_variable(Token name, std::shared_ptr<Expr> expr);
 };
 
 class NativeClock: public LoxCallable {

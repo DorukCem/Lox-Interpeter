@@ -1,10 +1,17 @@
 #include "headers/Resolver.h"
 #include "headers/Lox.h"
+#include <algorithm>
 
-Resolver::Resolver(Interpreter interpreter)
+Resolver::Resolver(Interpreter& interpreter)
   : interpreter(interpreter)
 {}
 
+void Resolver::resolve(std::vector<std::shared_ptr<Stmt>> statements)
+{
+   for (std::shared_ptr<Stmt>& stmt : statements) {
+      resolve(stmt);
+   }
+}
 
 std::any Resolver::visit_BlockStmt(std::shared_ptr<Block> stmt)
 {  
@@ -20,7 +27,7 @@ std::any Resolver::visit_FunctionStmt(std::shared_ptr<Function> stmt)
    declare(stmt->name);
    define(stmt->name);
 
-   resolve_function(stmt);
+   resolve_function(stmt, FunctionType::FUNCTION);
    return nullptr;
 }
 
@@ -58,6 +65,10 @@ std::any Resolver::visit_PrintStmt(std::shared_ptr<Print> stmt)
 
 std::any Resolver::visit_ReturnStmt(std::shared_ptr<Return> stmt)
 {
+   if (current_function == FunctionType::NONE) {
+      Lox::error(stmt->keyword, "Can't return from top-level code.");
+   }
+
    if (stmt->value != nullptr) {
       resolve(stmt->value);
    }
@@ -136,12 +147,6 @@ std::any Resolver::visit_UnaryExpr(std::shared_ptr<Unary> expr)
    return nullptr;
 }
 
-void Resolver::resolve(std::vector<std::shared_ptr<Stmt>> statements)
-{
-   for (std::shared_ptr<Stmt> stmt : statements) {
-      resolve(stmt);
-   }
-}
 
 void Resolver::resolve(std::shared_ptr<Stmt> stmt)
 {
@@ -166,7 +171,11 @@ void Resolver::end_scope()
 void Resolver::declare(Token name)
 {
    if (scopes.empty()) { return; }
-   scopes.back()[name.lexeme] = false;
+   std::map<std::string, bool>& scope = scopes.back();
+   if (scope.find(name.lexeme) != scope.end()) {
+      Lox::error(name, "Already a variable with this name in this scope.");
+   }
+   scope[name.lexeme] = false;
 }
 
 void Resolver::define(Token name)
@@ -177,7 +186,7 @@ void Resolver::define(Token name)
 
 void Resolver::resolve_local(std::shared_ptr<Expr> expr, Token name)
 {
-   for (int i = scopes.size()-1 ; i>= 0; i--)
+   for (int i = scopes.size()-1 ; i>= 0; --i)
    {
       if (scopes[i].find(name.lexeme) != scopes[i].end() )
       {
@@ -187,8 +196,11 @@ void Resolver::resolve_local(std::shared_ptr<Expr> expr, Token name)
    }
 }
 
-void Resolver::resolve_function(std::shared_ptr<Function> function)
+void Resolver::resolve_function(std::shared_ptr<Function> function, FunctionType type)
 {
+   FunctionType enclosing_function = current_function;
+   current_function = type;
+
    begin_scope();
    for (Token param : function->params) {
       declare(param);
@@ -196,4 +208,5 @@ void Resolver::resolve_function(std::shared_ptr<Function> function)
    }
    resolve(function->body);
    end_scope();
+   current_function = enclosing_function;
 }

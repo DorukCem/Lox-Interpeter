@@ -4,9 +4,14 @@
 #include "Interpreter.h"
 #include "map"
 
+enum class FunctionType {
+   NONE,
+   FUNCTION
+};
+
 class Resolver : ExprVisitor, StmtVisitor {
 public:
-   Resolver(Interpreter interpreter);
+   Resolver(Interpreter& interpreter);
    std::any visit_BlockStmt     (std::shared_ptr<Block> stmt)      override;
    std::any visit_VarStmt       (std::shared_ptr<Var> stmt)        override;
    std::any visit_ExpressionStmt(std::shared_ptr<Expression> stmt) override;
@@ -24,11 +29,12 @@ public:
    std::any visit_LogicalExpr(std::shared_ptr<Logical> expr)       override;
    std::any visit_UnaryExpr(std::shared_ptr<Unary> expr)       override;
 
-private:
-   Interpreter interpreter;
-   std::vector<std::map<std::string, bool>> scopes;
-private:
    void resolve(std::vector<std::shared_ptr<Stmt>> statements);
+private:
+   Interpreter& interpreter;
+   std::vector<std::map<std::string, bool>> scopes;
+   FunctionType current_function = FunctionType::NONE;
+private:
    void resolve(std::shared_ptr<Stmt> stmt);
    void resolve(std::shared_ptr<Expr> expr);
    void begin_scope();
@@ -36,5 +42,5 @@ private:
    void declare(Token name);
    void define(Token name);
    void resolve_local(std::shared_ptr<Expr> expr, Token name);
-   void resolve_function(std::shared_ptr<Function> function); 
+   void resolve_function(std::shared_ptr<Function> function, FunctionType type); 
 };

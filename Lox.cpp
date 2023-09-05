@@ -2,6 +2,7 @@
 #include "headers/Scanner.h"
 #include "headers/Parser.h"
 #include "headers/AST_printer.h"
+#include "headers/Resolver.h"
 
 #include <string>
 #include <fstream>
@@ -69,6 +70,11 @@ void Lox::run(std::string source)
    if (had_error) { 
       return; }
 
+   Resolver resolver(interpreter);
+   resolver.resolve(statements);
+
+   if (had_error) { 
+      return; }
    interpreter.interpret(statements);
 }
 

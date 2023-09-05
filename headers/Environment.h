@@ -10,7 +10,10 @@ public:
    std::shared_ptr<Environment> enclosing;
    void define(std::string name, std::any value);
    std::any get(Token name);
+   std::any get_at( int distance, std::string name);
    void assign(Token name, std::any value);   
+   void assign_at(int distance, Token name, std::any value);   
+   std::shared_ptr<Environment> ancestor(int distance);
    Environment();
    Environment(std::shared_ptr<Environment> enclosing);
 private:

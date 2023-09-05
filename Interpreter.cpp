@@ -51,7 +51,7 @@ void Interpreter::execute_block(std::vector<std::shared_ptr<Stmt>> statements, s
 
 void Interpreter::resolve(std::shared_ptr<Expr> expr, int depth)
 {
-   ;
+   locals[expr] = depth;
 }
 
 std::any Interpreter::visit_BinaryExpr(std::shared_ptr<Binary> expr)
@@ -148,13 +148,22 @@ std::any Interpreter::visit_UnaryExpr(std::shared_ptr<Unary> expr)
 
 std::any Interpreter::visit_VariableExpr( std::shared_ptr<Variable> expr )
 {
-   return environment->get(expr->name);
+   return look_up_variable(expr->name, expr);
 }
 
 std::any Interpreter::visit_AssignExpr(std::shared_ptr<Assign> expr)
 {
    std::any value = evaluate(expr->value);
-   environment->assign(expr->name, value);
+   
+   if (locals.find(expr) != locals.end())
+   {
+      int distance = locals[expr];
+      environment->assign_at(distance, expr->name, value);
+   }
+   else {
+      global_environment->assign(expr->name, value);
+   }
+
    return value;  
 }
 
@@ -320,4 +329,16 @@ std::string Interpreter::stringify(std::any object)
    }
 
    return "Error in stringify: object type not recognized.";
+}
+
+std::any Interpreter::look_up_variable(Token name, std::shared_ptr<Expr> expr)
+{
+   if (locals.find(expr) != locals.end())
+   {
+      int distance = locals[expr];
+      return environment->get_at(distance, name.lexeme);
+   }
+   else {
+      return global_environment->get(name);
+   }
 }
