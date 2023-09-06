@@ -255,7 +255,7 @@ std::any Interpreter::visit_BlockStmt(std::shared_ptr<Block> stmt)
 std::any Interpreter::visit_ClassStmt(std::shared_ptr<Class> stmt)
 {
    environment->define(stmt->name.lexeme, nullptr);
-   LoxClass lox_class(stmt->name.lexeme);
+   auto lox_class = std::make_shared<LoxClass>(stmt->name.lexeme); 
    environment->assign(stmt->name, lox_class);
    return {};
 }
@@ -337,6 +337,14 @@ std::string Interpreter::stringify(std::any object)
       return std::any_cast<bool>(object) ? "true" : "false";
    }
 
+   if (object.type() == typeid(std::shared_ptr<LoxFunction>)) {
+      return std::any_cast<
+          std::shared_ptr<LoxFunction>>(object)->to_string();
+   }
+   if (object.type() == typeid(std::shared_ptr<LoxClass>)) {
+      return std::any_cast<
+         std::shared_ptr<LoxClass>>(object)->to_string();
+   }
    return "Error in stringify: object type not recognized.";
 }
 

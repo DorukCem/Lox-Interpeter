@@ -46,7 +46,7 @@ void Environment::assign(Token name, std::any value)
 {
    if (values.find(name.lexeme) != values.end())
    {
-      values[name.lexeme] = value;
+      values[name.lexeme] = value; 
       return;
    }
 

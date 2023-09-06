@@ -22,7 +22,6 @@ std::any Resolver::visit_BlockStmt(std::shared_ptr<Block> stmt)
    return nullptr;
 }
 
-
 std::any Resolver::visit_ClassStmt(std::shared_ptr<Class> stmt)
 {
    declare(stmt->name);
