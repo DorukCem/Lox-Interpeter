@@ -1,6 +1,7 @@
 #include "headers/LoxFunction.h"
 #include "headers/Lox.h"
 #include "headers/LoxClass.h"
+#include "headers/LoxInstance.h"
 #include <iostream>
 
 Interpreter::Interpreter()
@@ -181,7 +182,11 @@ std::any Interpreter::visit_CallExpr(std::shared_ptr<Call> expr)
    std::shared_ptr<LoxCallable> function;
    if (callee.type() == typeid(std::shared_ptr<LoxFunction>)) {
       function = std::any_cast<std::shared_ptr<LoxFunction>>(callee);
-   } else {
+   }
+   else if (callee.type() == typeid(std::shared_ptr<LoxClass>)) {
+      function = std::any_cast<std::shared_ptr<LoxClass>>(callee);
+   }
+   else {
       throw RuntimeError{expr->paren, "Can only call functions and classes."};
    }
 
@@ -345,6 +350,11 @@ std::string Interpreter::stringify(std::any object)
       return std::any_cast<
          std::shared_ptr<LoxClass>>(object)->to_string();
    }
+   if (object.type() == typeid(std::shared_ptr<LoxInstance>)) {
+      return std::any_cast<
+         std::shared_ptr<LoxInstance>>(object)->to_string();
+   }
+
    return "Error in stringify: object type not recognized.";
 }
 
