@@ -22,6 +22,7 @@ std::shared_ptr<Stmt> Parser::declaration()
 {
    try 
    {
+      if (match(CLASS)) { return class_declaration(); }
       if (match(FUN)) { return function("function"); }
       if (match(VAR)) { return var_declaration(); }
       return statement();
@@ -44,6 +45,19 @@ std::shared_ptr<Stmt> Parser::var_declaration()
    return std::make_shared<Var>(Var(name, initializer));
 }
 
+std::shared_ptr<Stmt> Parser::class_declaration()
+{
+   Token name = consume(IDENTIFIER, "Expect class name.");
+   consume(LEFT_BRACE, "Expect '{' before class body.");
+   std::vector<std::shared_ptr<Function>> methods;
+   while( !check(RIGHT_BRACE) and !is_at_end()) {
+      methods.push_back( function("method") );
+   }
+
+   consume(RIGHT_BRACE, "Expect '}' after class body.");
+
+   return std::make_shared<Class>(name, methods);
+ }
 
 std::shared_ptr<Expr> Parser::expression()
 {
@@ -347,7 +361,7 @@ std::shared_ptr<Stmt> Parser::expression_statement()
    return std::make_shared<Expression>(expr);
 }
 
-std::shared_ptr<Stmt> Parser::function(std::string kind)
+std::shared_ptr<Function> Parser::function(std::string kind)
 {
    Token name = consume(IDENTIFIER,  "Expect " + kind + " name.");
    consume(LEFT_PAREN, "Expect '(' after " + kind + " name.");

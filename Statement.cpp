@@ -67,3 +67,12 @@ std::any Return::accept(StmtVisitor& visitor)
 {
   return visitor.visit_ReturnStmt(shared_from_this());
 }
+
+Class::Class(Token name, std::vector<std::shared_ptr<Function>> methods)
+  : name(name), methods(methods)
+{}
+
+std::any Class::accept(StmtVisitor& visitor)
+{
+  return visitor.visit_ClassStmt(shared_from_this());
+}

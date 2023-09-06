@@ -53,7 +53,8 @@ private:
    std::shared_ptr<Stmt> expression_statement();
    std::shared_ptr<Stmt> declaration();
    std::shared_ptr<Stmt> var_declaration();
-   std::shared_ptr<Stmt> function(std::string kind);
+   std::shared_ptr<Stmt> class_declaration();
+   std::shared_ptr<Function> function(std::string kind);
    std::vector<std::shared_ptr<Stmt>> block();
 
 };

@@ -1,5 +1,6 @@
 #include "headers/LoxFunction.h"
 #include "headers/Lox.h"
+#include "headers/LoxClass.h"
 #include <iostream>
 
 Interpreter::Interpreter()
@@ -248,6 +249,14 @@ std::any Interpreter::visit_WhileStmt(std::shared_ptr<While> stmt)
 std::any Interpreter::visit_BlockStmt(std::shared_ptr<Block> stmt)
 {
    execute_block(stmt->statements, std::make_shared<Environment>(environment));
+   return {};
+}
+
+std::any Interpreter::visit_ClassStmt(std::shared_ptr<Class> stmt)
+{
+   environment->define(stmt->name.lexeme, nullptr);
+   LoxClass lox_class(stmt->name.lexeme);
+   environment->assign(stmt->name, lox_class);
    return {};
 }
 

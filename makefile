@@ -12,5 +12,4 @@ $(TARGET): $(OBJS)
 	$(CC) -o $@ $^
 %.o: %.cpp
 	$(CC) $(CFLAGS) -c $<
-clean:
-	rm *.o
+

@@ -24,6 +24,7 @@ public:
    std::any visit_WhileStmt      (std::shared_ptr<While> stmt)      override;
    std::any visit_FunctionStmt   (std::shared_ptr<Function> stmt)   override;
    std::any visit_ReturnStmt     (std::shared_ptr<Return> stmt)     override;
+   std::any visit_ClassStmt      (std::shared_ptr<Class> stmt)      override;
    Interpreter();
    ~Interpreter() = default ;
 
