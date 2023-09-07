@@ -11,3 +11,12 @@ int LoxClass::arity()
 {
    return 0;
 }
+
+std::shared_ptr<LoxFunction> LoxClass::find_method(std::string name)
+{
+   if (methods.find(name) != methods.end())
+   {
+      return methods[name];
+   }
+   return nullptr;
+}

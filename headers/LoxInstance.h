@@ -1,14 +1,17 @@
 #pragma once
 #include "LoxClass.h"
 #include "memory"
+#include "Token.h"
+#include <map>
 
 class LoxInstance {
 public:
-   LoxInstance(std::shared_ptr<LoxClass> lox_class) 
-      : lox_class(lox_class) {}
+   LoxInstance(std::shared_ptr<LoxClass> lox_class);
+   std::string to_string(); 
+   std::any get(Token name); 
+   void set(Token name, std::any value);
 
-   std::string to_string() { return lox_class-> name + " instance"; }
 private:
    std::shared_ptr<LoxClass> lox_class;
-
+   std::map<std::string, std::any> fields;
 };

@@ -90,3 +90,26 @@ std::any Call::accept(ExprVisitor& visitor)
 {
    return visitor.visit_CallExpr(shared_from_this());
 }
+
+// *-----------------Get-----------------------
+
+Get::Get(std::shared_ptr<Expr> object, Token name)
+   :object(object), name(name)
+{}
+
+
+std::any Get::accept(ExprVisitor& visitor)
+{
+   return visitor.visit_GetExpr(shared_from_this());
+}
+
+// *-----------------Set-----------------------
+
+Set::Set(std::shared_ptr<Expr> object, Token name, std::shared_ptr<Expr> value)
+   :object(object), name(name), value(value)
+{ }
+
+std::any Set::accept(ExprVisitor& visitor)
+{
+   return visitor.visit_SetExpr(shared_from_this());
+}

@@ -74,13 +74,16 @@ std::shared_ptr<Expr> Parser::assignment()
       std::shared_ptr<Expr> value = assignment();  // ** <- A recursive call
 
       // * https://stackoverflow.com/questions/19501838/get-derived-type-via-base-class-virtual-function
-      // ** Check if expr is of type Variable
+      // ** Check if expr is of type Variable or Get
       if (Variable* e = dynamic_cast<Variable*>(expr.get())) 
       {
          Token name = e->name;
          return std::make_shared<Assign>(name, value);
       }
-
+      else if (Get* get = dynamic_cast<Get*>(expr.get())) 
+      {
+         return  std::make_shared<Set>(get->object, get->name, value);
+      }
       error(equals, "Invalid assignment target.");
    }
 
@@ -193,6 +196,11 @@ std::shared_ptr<Expr> Parser::call()
       {
          expr = finish_call(expr);
       } 
+      else if (match(DOT)) 
+      {
+        Token name = consume(IDENTIFIER, "Expect property name after '.'.");
+        expr = std::make_shared<Get>(expr, name);
+      }
       else { break; }
    }
 
