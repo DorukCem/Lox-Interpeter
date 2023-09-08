@@ -18,6 +18,7 @@ public:
    std::any visit_CallExpr    (std::shared_ptr<Call> expr)     override; 
    std::any visit_GetExpr     (std::shared_ptr<Get> expr)      override; 
    std::any visit_SetExpr     (std::shared_ptr<Set> expr)      override; 
+   std::any visit_ThisExpr    (std::shared_ptr<This> expr)     override; 
    std::any visit_ExpressionStmt (std::shared_ptr<Expression> stmt) override;
    std::any visit_PrintStmt      (std::shared_ptr<Print> stmt)      override;
    std::any visit_VarStmt        (std::shared_ptr<Var> stmt)        override;

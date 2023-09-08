@@ -2,14 +2,15 @@
 #include "headers/Environment.h"
 #include "headers/Interpreter.h"
 #include "headers/RuntimeError.h"
+#include "headers/LoxInstance.h"
 
 LoxFunction::LoxFunction(std::shared_ptr<Function> declaration,  std::shared_ptr<Environment> closure)
    :declaration(declaration), closure(closure)
 { }
 
-std::any LoxFunction::call(Interpreter& interpeter, std::vector<std::any> arguments)
+std::any LoxFunction::call(Interpreter& interpeter, std::vector<std::any> arguments) 
 {
-   std::shared_ptr<Environment> environment = closure; // ! Might have a problem here in the future
+   auto environment = std::make_shared<Environment>(closure); 
    for (int i = 0; i < static_cast<int>(declaration->params.size()); i++)
    {
       environment->define(declaration->params[i].lexeme, arguments[i]);
@@ -30,4 +31,11 @@ int LoxFunction::arity()
 std::string LoxFunction::to_string()
 {
    return "<fn " + declaration->name.lexeme + ">";
+}
+
+std::shared_ptr<LoxFunction> LoxFunction::bind(std::shared_ptr<LoxInstance> instance)
+{
+   auto environment = std::make_shared<Environment>(closure);
+   environment->define("this", instance);
+   return std::make_shared<LoxFunction>(declaration, environment);
 }

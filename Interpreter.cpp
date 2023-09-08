@@ -174,7 +174,7 @@ std::any Interpreter::visit_CallExpr(std::shared_ptr<Call> expr)
    std::any callee = evaluate(expr->calle);
 
    std::vector<std::any> arguments;
-   for (std::shared_ptr<Expr> argument : expr->arguements)
+   for (const std::shared_ptr<Expr> &argument : expr->arguements)
    {
       arguments.push_back(evaluate(argument));
    }
@@ -221,6 +221,11 @@ std::any Interpreter::visit_SetExpr(std::shared_ptr<Set> expr)
    instance->set(expr->name, value);
    
    return value;
+}
+
+std::any Interpreter::visit_ThisExpr(std::shared_ptr<This> expr)
+{
+   return look_up_variable(expr->keyword, expr);
 }
 
 std::any Interpreter::visit_ExpressionStmt(std::shared_ptr<Expression> stmt)

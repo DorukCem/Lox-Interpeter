@@ -113,3 +113,14 @@ std::any Set::accept(ExprVisitor& visitor)
 {
    return visitor.visit_SetExpr(shared_from_this());
 }
+
+// *-----------------This-----------------------
+
+This::This(Token keyword)
+   : keyword(keyword)
+{ }
+
+std::any This::accept(ExprVisitor& visitor)
+{
+   return visitor.visit_ThisExpr(shared_from_this());
+}

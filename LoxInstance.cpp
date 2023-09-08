@@ -19,7 +19,7 @@ std::any LoxInstance::get(Token name)
 
    std::shared_ptr<LoxFunction> method = lox_class->find_method(name.lexeme);
    if (method != nullptr) { 
-      return method;
+      return method->bind( shared_from_this() );
    }
 
    throw RuntimeError(name, "Undefined property '" + name.lexeme + "'.");

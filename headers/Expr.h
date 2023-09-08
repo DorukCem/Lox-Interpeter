@@ -13,6 +13,7 @@ struct Logical;
 struct Call;
 struct Get;
 struct Set;
+struct This;
 
 struct ExprVisitor {
   virtual std::any visit_BinaryExpr  (std::shared_ptr<Binary> expr)   = 0;
@@ -25,6 +26,7 @@ struct ExprVisitor {
   virtual std::any visit_CallExpr    (std::shared_ptr<Call> expr)     = 0;
   virtual std::any visit_GetExpr     (std::shared_ptr<Get> expr)      = 0;
   virtual std::any visit_SetExpr     (std::shared_ptr<Set> expr)      = 0;
+  virtual std::any visit_ThisExpr    (std::shared_ptr<This> expr)     = 0;
   virtual ~ExprVisitor() = default;
 };
 
@@ -137,4 +139,12 @@ struct Set: Expr, public std::enable_shared_from_this<Set> {
   std::shared_ptr<Expr> object;
   Token name;
   std::shared_ptr<Expr> value;
+};
+
+struct This: Expr, public std::enable_shared_from_this<This> {
+  This(Token keyword);
+  
+  std::any accept(ExprVisitor& visitor) override;
+  
+  const Token keyword;
 };

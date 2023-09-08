@@ -27,11 +27,13 @@ std::any Resolver::visit_ClassStmt(std::shared_ptr<Class> stmt)
    declare(stmt->name);
    define(stmt->name);
 
+   begin_scope();
+   scopes.back()["this"] = true; 
    for (std::shared_ptr<Function> method: stmt->methods) {
       FunctionType declaration = FunctionType::METHOD;
       resolve_function(method, declaration);
    }
-
+   end_scope();
 
    return nullptr;
 }
@@ -147,6 +149,12 @@ std::any Resolver::visit_SetExpr(std::shared_ptr<Set> expr)
 {
    resolve(expr->value);
    resolve(expr->object);
+   return nullptr;
+}
+
+std::any Resolver::visit_ThisExpr(std::shared_ptr<This> expr)
+{
+   resolve_local(expr, expr->keyword);
    return nullptr;
 }
 

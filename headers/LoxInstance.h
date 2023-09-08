@@ -4,7 +4,7 @@
 #include "Token.h"
 #include <map>
 
-class LoxInstance {
+class LoxInstance : public std::enable_shared_from_this<LoxInstance> {
 public:
    LoxInstance(std::shared_ptr<LoxClass> lox_class);
    std::string to_string(); 

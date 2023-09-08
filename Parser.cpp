@@ -27,7 +27,7 @@ std::shared_ptr<Stmt> Parser::declaration()
       if (match(VAR)) { return var_declaration(); }
       return statement();
    } 
-   catch (ParseError const& error) {
+   catch (ParseError const& error) { //! catch error by reference??
       synchronize(); // We can synchronize after error in case we find a variable declartion
       return nullptr; 
    }
@@ -57,7 +57,7 @@ std::shared_ptr<Stmt> Parser::class_declaration()
    consume(RIGHT_BRACE, "Expect '}' after class body.");
 
    return std::make_shared<Class>(name, methods);
- }
+}
 
 std::shared_ptr<Expr> Parser::expression()
 {
@@ -82,7 +82,7 @@ std::shared_ptr<Expr> Parser::assignment()
       }
       else if (Get* get = dynamic_cast<Get*>(expr.get())) 
       {
-         return  std::make_shared<Set>(get->object, get->name, value);
+         return std::make_shared<Set>(get->object, get->name, value);
       }
       error(equals, "Invalid assignment target.");
    }
@@ -198,8 +198,8 @@ std::shared_ptr<Expr> Parser::call()
       } 
       else if (match(DOT)) 
       {
-        Token name = consume(IDENTIFIER, "Expect property name after '.'.");
-        expr = std::make_shared<Get>(expr, name);
+         Token name = consume(IDENTIFIER, "Expect property name after '.'.");
+         expr = std::make_shared<Get>(expr, name);
       }
       else { break; }
    }
@@ -228,13 +228,15 @@ std::shared_ptr<Expr> Parser::finish_call(std::shared_ptr<Expr> callee)
 // ** this is the last stop of recursion
 std::shared_ptr<Expr> Parser::primary()
 {
-   if (match(LOX_FALSE)) return std::make_shared<Literal>(false);
-   if (match(LOX_TRUE)) return std::make_shared<Literal>(true);
-   if (match(NIL)) return std::make_shared<Literal>(nullptr);
+   if (match(LOX_FALSE)) {return std::make_shared<Literal>(false);}
+   if (match(LOX_TRUE)) {return std::make_shared<Literal>(true);}
+   if (match(NIL)) {return std::make_shared<Literal>(nullptr);}
 
    if (match(NUMBER, STRING)) {
       return std::make_shared<Literal>(previous().literal);
    }
+
+   if (match(THIS)) {return std::make_shared<This>(previous());}
 
    if (match(IDENTIFIER)) {
       return std::make_shared<Variable>(previous());
@@ -245,8 +247,8 @@ std::shared_ptr<Expr> Parser::primary()
       consume(RIGHT_PAREN, "Expect ')' after expression.");
       return std::make_shared<Group>(expr);
    }
-
-   throw error(peek(), "Expect expression.");
+    
+   throw error(peek(), "Expect expression."); 
 }
 
 std::shared_ptr<Stmt> Parser::statement()
@@ -381,8 +383,7 @@ std::shared_ptr<Function> Parser::function(std::string kind)
             error(peek(), "Can't have more than 255 parameters.");
          }
          parameters.push_back( consume(IDENTIFIER, "Expect parameter name.") );
-      }
-      while (match(COMMA));
+      } while (match(COMMA));
    }
    consume(RIGHT_PAREN, "Expect ')' after parameters.");
 
