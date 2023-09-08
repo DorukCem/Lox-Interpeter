@@ -22,8 +22,11 @@ std::any Resolver::visit_BlockStmt(std::shared_ptr<Block> stmt)
    return nullptr;
 }
 
-std::any Resolver::visit_ClassStmt(std::shared_ptr<Class> stmt)
+std::any Resolver::  visit_ClassStmt(std::shared_ptr<Class> stmt)
 {
+   ClassType enclosing_class = current_class;
+   current_class = ClassType::CLASS;
+
    declare(stmt->name);
    define(stmt->name);
 
@@ -35,6 +38,7 @@ std::any Resolver::visit_ClassStmt(std::shared_ptr<Class> stmt)
    }
    end_scope();
 
+   current_class = enclosing_class;
    return nullptr;
 }
 
@@ -154,6 +158,11 @@ std::any Resolver::visit_SetExpr(std::shared_ptr<Set> expr)
 
 std::any Resolver::visit_ThisExpr(std::shared_ptr<This> expr)
 {
+   if (current_class == ClassType::NONE) {
+      Lox::error(expr->keyword, "Can't use 'this' outside of a class.");
+      return nullptr;
+   }
+
    resolve_local(expr, expr->keyword);
    return nullptr;
 }

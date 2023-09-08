@@ -10,6 +10,11 @@ enum class FunctionType {
    METHOD
 };
 
+enum class ClassType {
+   NONE,
+   CLASS
+};
+
 class Resolver : ExprVisitor, StmtVisitor {
 public:
    Resolver(Interpreter& interpreter);
@@ -39,6 +44,7 @@ private:
    Interpreter& interpreter;
    std::vector<std::map<std::string, bool>> scopes;
    FunctionType current_function = FunctionType::NONE;
+   ClassType current_class = ClassType::NONE;
 private:
    void resolve(std::shared_ptr<Stmt> stmt);
    void resolve(std::shared_ptr<Expr> expr);
