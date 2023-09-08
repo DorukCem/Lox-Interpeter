@@ -296,7 +296,7 @@ std::any Interpreter::visit_ClassStmt(std::shared_ptr<Class> stmt)
    std::map<std::string, std::shared_ptr<LoxFunction>> methods;
    for (std::shared_ptr<Function> method : stmt->methods)
    {
-      auto function = std::make_shared<LoxFunction>(method, environment);
+      auto function = std::make_shared<LoxFunction>(method, environment, method->name.lexeme == "init" );
       methods[method->name.lexeme] = function; 
    }
 
@@ -307,7 +307,7 @@ std::any Interpreter::visit_ClassStmt(std::shared_ptr<Class> stmt)
 
 std::any Interpreter::visit_FunctionStmt(std::shared_ptr<Function> stmt)
 {
-   auto function = std::make_shared<LoxFunction>(stmt, environment);
+   auto function = std::make_shared<LoxFunction>(stmt, environment, false);
    environment->define(stmt->name.lexeme, function);
    return {};
 }

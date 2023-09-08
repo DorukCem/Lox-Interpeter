@@ -22,7 +22,7 @@ std::any Resolver::visit_BlockStmt(std::shared_ptr<Block> stmt)
    return nullptr;
 }
 
-std::any Resolver::  visit_ClassStmt(std::shared_ptr<Class> stmt)
+std::any Resolver::visit_ClassStmt(std::shared_ptr<Class> stmt)
 {
    ClassType enclosing_class = current_class;
    current_class = ClassType::CLASS;
@@ -34,8 +34,11 @@ std::any Resolver::  visit_ClassStmt(std::shared_ptr<Class> stmt)
    scopes.back()["this"] = true; 
    for (std::shared_ptr<Function> method: stmt->methods) {
       FunctionType declaration = FunctionType::METHOD;
+      if (method->name.lexeme == "init") {
+        declaration = FunctionType::INITIALIZER;
+      }
       resolve_function(method, declaration);
-   }
+   }  
    end_scope();
 
    current_class = enclosing_class;
@@ -90,6 +93,10 @@ std::any Resolver::visit_ReturnStmt(std::shared_ptr<Return> stmt)
    }
 
    if (stmt->value != nullptr) {
+      if (current_function == FunctionType::INITIALIZER) {
+        Lox::error(stmt->keyword, "Can't return a value from an initializer.");
+      }
+
       resolve(stmt->value);
    }
 

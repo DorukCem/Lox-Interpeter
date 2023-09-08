@@ -4,8 +4,8 @@
 #include "headers/RuntimeError.h"
 #include "headers/LoxInstance.h"
 
-LoxFunction::LoxFunction(std::shared_ptr<Function> declaration,  std::shared_ptr<Environment> closure)
-   :declaration(declaration), closure(closure)
+LoxFunction::LoxFunction(std::shared_ptr<Function> declaration,  std::shared_ptr<Environment> closure, bool is_initializer)
+   :declaration(declaration), closure(closure), is_initializer(is_initializer)
 { }
 
 std::any LoxFunction::call(Interpreter& interpeter, std::vector<std::any> arguments) 
@@ -18,7 +18,14 @@ std::any LoxFunction::call(Interpreter& interpeter, std::vector<std::any> argume
    try {
       interpeter.execute_block(std::vector<std::shared_ptr<Stmt>>{declaration->body}, environment);
    } catch (LoxReturn return_value) {
+      if (is_initializer) {
+         return closure->get_at(0, "this");
+      }
       return return_value.value;
+   }
+
+   if (is_initializer) {
+      return closure->get_at(0, "this");
    }
    return nullptr;
 }
@@ -37,5 +44,5 @@ std::shared_ptr<LoxFunction> LoxFunction::bind(std::shared_ptr<LoxInstance> inst
 {
    auto environment = std::make_shared<Environment>(closure);
    environment->define("this", instance);
-   return std::make_shared<LoxFunction>(declaration, environment);
+   return std::make_shared<LoxFunction>(declaration, environment, is_initializer);
 }
