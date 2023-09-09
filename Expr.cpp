@@ -124,3 +124,14 @@ std::any This::accept(ExprVisitor& visitor)
 {
    return visitor.visit_ThisExpr(shared_from_this());
 }
+
+// *-----------------Super-----------------------
+
+Super::Super(Token keyword, Token method)
+   : keyword(keyword), method(method)
+{ }
+
+std::any Super::accept(ExprVisitor& visitor)
+{
+   return visitor.visit_SuperExpr(shared_from_this());
+}

@@ -223,6 +223,19 @@ std::any Interpreter::visit_SetExpr(std::shared_ptr<Set> expr)
    return value;
 }
 
+std::any Interpreter::visit_SuperExpr(std::shared_ptr<Super> expr)
+{
+   int distance = locals[expr];
+   auto superclass =  std::any_cast< std::shared_ptr<LoxClass>>( environment->get_at(distance, "super" ) );
+   auto object = std::any_cast< std::shared_ptr<LoxInstance>>( environment->get_at(distance-1, "this" ) );
+
+   std::shared_ptr<LoxFunction> method = superclass->find_method(expr->method.lexeme);
+   if (method == nullptr) {
+      throw new RuntimeError(expr->method, "Undefined property '" + expr->method.lexeme + "'.");
+   }
+   return method->bind(object);
+}
+
 std::any Interpreter::visit_ThisExpr(std::shared_ptr<This> expr)
 {
    return look_up_variable(expr->keyword, expr);
@@ -291,7 +304,21 @@ std::any Interpreter::visit_BlockStmt(std::shared_ptr<Block> stmt)
 
 std::any Interpreter::visit_ClassStmt(std::shared_ptr<Class> stmt)
 {
+   std::any superclass = nullptr;
+   if (stmt->superclass != nullptr) {
+      superclass = evaluate(stmt->superclass);
+      if (superclass.type() != typeid(std::shared_ptr<LoxClass>) )
+      {
+         throw RuntimeError(stmt->superclass->name, "Superclass must be a class.");
+      }
+   }
+
    environment->define(stmt->name.lexeme, nullptr);
+
+   if (stmt->superclass != nullptr) {
+      environment = std::make_shared<Environment>(environment);
+      environment->define("super", superclass);
+   }
 
    std::map<std::string, std::shared_ptr<LoxFunction>> methods;
    for (std::shared_ptr<Function> method : stmt->methods)
@@ -300,7 +327,17 @@ std::any Interpreter::visit_ClassStmt(std::shared_ptr<Class> stmt)
       methods[method->name.lexeme] = function; 
    }
 
-   auto lox_class = std::make_shared<LoxClass>(stmt->name.lexeme, methods); 
+   std::shared_ptr<LoxClass> temp = nullptr;
+   if (superclass.type() == typeid(std::shared_ptr<LoxClass>)) {
+      temp = std::any_cast<std::shared_ptr<LoxClass>>(superclass);
+   }
+
+   auto lox_class = std::make_shared<LoxClass>(stmt->name.lexeme, temp, methods); 
+
+   if (temp != nullptr) {
+      environment = environment->enclosing;
+   }
+
    environment->assign(stmt->name, lox_class);
    return {};
 }

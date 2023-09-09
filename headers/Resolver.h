@@ -13,7 +13,8 @@ enum class FunctionType {
 
 enum class ClassType {
    NONE,
-   CLASS
+   CLASS,
+   SUBCLASS
 };
 
 class Resolver : ExprVisitor, StmtVisitor {
@@ -39,6 +40,7 @@ public:
    std::any visit_GetExpr(std::shared_ptr<Get> expr)       override;
    std::any visit_SetExpr(std::shared_ptr<Set> expr)       override;
    std::any visit_ThisExpr(std::shared_ptr<This> expr)       override;
+   std::any visit_SuperExpr(std::shared_ptr<Super> expr)       override;
 
    void resolve(std::vector<std::shared_ptr<Stmt>> statements);
 private:

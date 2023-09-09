@@ -14,6 +14,7 @@ struct Call;
 struct Get;
 struct Set;
 struct This;
+struct Super;
 
 struct ExprVisitor {
   virtual std::any visit_BinaryExpr  (std::shared_ptr<Binary> expr)   = 0;
@@ -27,6 +28,7 @@ struct ExprVisitor {
   virtual std::any visit_GetExpr     (std::shared_ptr<Get> expr)      = 0;
   virtual std::any visit_SetExpr     (std::shared_ptr<Set> expr)      = 0;
   virtual std::any visit_ThisExpr    (std::shared_ptr<This> expr)     = 0;
+  virtual std::any visit_SuperExpr   (std::shared_ptr<Super> expr)    = 0;
   virtual ~ExprVisitor() = default;
 };
 
@@ -55,6 +57,8 @@ struct Binary : Expr, std::enable_shared_from_this<Binary>
 
    std::any accept(ExprVisitor &visitor) override;
 };
+
+
 
 
 struct Group : Expr, public std::enable_shared_from_this<Group>
@@ -147,4 +151,13 @@ struct This: Expr, public std::enable_shared_from_this<This> {
   std::any accept(ExprVisitor& visitor) override;
   
   const Token keyword;
+};
+
+struct Super: Expr, public std::enable_shared_from_this<Super>{
+  Super(Token keyword, Token method);
+  
+  std::any accept(ExprVisitor& visitor) override;
+  
+  const Token keyword;
+  const Token method;
 };

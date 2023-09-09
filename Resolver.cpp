@@ -30,6 +30,21 @@ std::any Resolver::visit_ClassStmt(std::shared_ptr<Class> stmt)
    declare(stmt->name);
    define(stmt->name);
 
+   if (stmt->superclass != nullptr and stmt->name.lexeme == stmt->superclass->name.lexeme)
+   {
+      Lox::error(stmt->superclass->name,  "A class can't inherit from itself.");
+   }
+
+   if (stmt->superclass != nullptr) {
+      current_class = ClassType::SUBCLASS;
+      resolve(stmt->superclass);
+   }
+
+   if (stmt->superclass != nullptr) {
+      begin_scope();      // * <- If begin scope here
+      scopes.back()["super"] = true;
+    }
+
    begin_scope();
    scopes.back()["this"] = true; 
    for (std::shared_ptr<Function> method: stmt->methods) {
@@ -40,6 +55,10 @@ std::any Resolver::visit_ClassStmt(std::shared_ptr<Class> stmt)
       resolve_function(method, declaration);
    }  
    end_scope();
+
+   if (stmt->superclass != nullptr) { 
+      end_scope(); // * <- Then end scope here
+   }
 
    current_class = enclosing_class;
    return nullptr;
@@ -162,6 +181,20 @@ std::any Resolver::visit_SetExpr(std::shared_ptr<Set> expr)
    resolve(expr->object);
    return nullptr;
 }
+
+ std::any Resolver::visit_SuperExpr(std::shared_ptr<Super> expr)
+ {
+   if (current_class == ClassType::NONE) {
+      Lox::error(expr->keyword, "Can't use 'super' outside of a class.");
+   } 
+   else if (current_class != ClassType::SUBCLASS) 
+   {
+      Lox::error(expr->keyword, "Can't use 'super' in a class with no superclass.");
+   }
+
+   resolve_local(expr, expr->keyword);
+   return nullptr;
+ }
 
 std::any Resolver::visit_ThisExpr(std::shared_ptr<This> expr)
 {

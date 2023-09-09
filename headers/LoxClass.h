@@ -7,8 +7,10 @@
 
 class LoxClass : public LoxCallable, public std::enable_shared_from_this<LoxClass>{
 public:
-   LoxClass(std::string name, std::map<std::string, std::shared_ptr<LoxFunction>> methods) : name(name), methods(methods) {}
+   LoxClass(std::string name, std::shared_ptr<LoxClass> superclass,std::map<std::string, std::shared_ptr<LoxFunction>> methods) 
+      : name(name), superclass(superclass), methods(methods) {}
    const std::string name;
+   const std::shared_ptr<LoxClass> superclass;
    std::map<std::string, std::shared_ptr<LoxFunction>> methods; //! This is potentially a huge copy operation
 public:
    std::string to_string() override { return name; }
