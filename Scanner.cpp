@@ -171,7 +171,7 @@ void Scanner::number()
 
 void Scanner::identifier()
 {
-   while (isalnum(peek())) {
+   while (isalnum(peek()) or peek() == '_') {
       advance();
    }
    std::string text = source.substr(start, current-start);   
