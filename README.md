@@ -13,7 +13,7 @@ make
 
 # How to use
 
-To run a REPL session run main
+To run a REPL session: Run main
 ```
 .\main
 ```
@@ -27,7 +27,7 @@ To run a REPL session run main
 ```
 use exit to end the REPL session
 
-To run a script run main with name of the script
+To run a script: Run main with name of the script
 ```
 .\main example.lox
 ```
@@ -66,7 +66,7 @@ for (var i = 0; i < 20; i = i + 1) {
   print fib(i);
 }
 ```
-closure:
+closures:
 ```
 fun makeCounter() {
   var i = 0;
